@@ -5,13 +5,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+//driver for the program will be ignored once the GUI is made
 public class driver {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		// TODO Auto-generated method stub
 		Scanner sc = new Scanner(new File("src/proc.txt"));
-		String alg = sc.nextLine();//First Line is the algorithm
+		String alg = sc.nextLine();//First Line is the algorithm identifier
 		List<PCB> allProcesses = new ArrayList<>();
 		int id=0;
 		String line;

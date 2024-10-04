@@ -54,24 +54,6 @@ public abstract class SchedulingAlgorithm {
 			System.out.println();
 		}
 		
-		//  add code to complete the method
-//		- Print the name of the scheduling algorithm
-//		- while (allProcs is not empty or readyQueue is not empty) {
-//		    - Print the current system time
-//		    - Move arrived processes from allProcs to readyQueue (arrivalTime = systemTime)
-//		    - curProcess = pickNextProcess() //call pickNextProcess() to choose next process
-//		    - call print() to print simulation events: CPU, ready queue, ..
-//		    - update the start time of the selected process (curProcess)
-//		    - Call CPU.execute() to let the CPU execute 1 CPU burst unit time of curProcess
-//		    - Increase 1 to the waiting time of other processes in the ready queue
-//		    - Increase systemTime by 1
-//		    - Check if the remaining CPU burst of curProcess = 0
-//		        - Update finishTime of curProcess
-//		        - remove curProcess from readyQueue
-//		        - add curProcess to the finished queue (finishedProcs)
-//		        - Print to the console a message displaying the process name, terminated time, 
-//		                                               startTime, turnaroundTime, waitingTime
-//		    - Print a new line
 
 	}
 	

@@ -3,7 +3,7 @@ package lab05;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+//priority sorting
 public class PSS extends SchedulingAlgorithm {
 	
 
