@@ -1,4 +1,4 @@
-package cpuScheduler;
+package cpuscheduler;
 
 import java.util.Collections;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package cpuScheduler;
+package cpuscheduler;
 public class PCB {
 	
 	// the representation of each process
