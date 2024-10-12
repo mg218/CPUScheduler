@@ -1,4 +1,4 @@
-package lab05;
+package cpuscheduler;
 
 import java.util.Collections;
 import java.util.Comparator;
