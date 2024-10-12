@@ -1,4 +1,4 @@
-package lab05;
+package cpuScheduler;
 public class PCB {
 	
 	// the representation of each process

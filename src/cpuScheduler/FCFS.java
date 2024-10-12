@@ -1,4 +1,4 @@
-package lab05;
+package cpuScheduler;
 
 import java.util.List;
 //First come first server

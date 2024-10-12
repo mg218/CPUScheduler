@@ -1,4 +1,4 @@
-package lab05;
+package cpuScheduler;
 
 public class CPU {
 	public static void execute(PCB process, int cpuBurst) {	
