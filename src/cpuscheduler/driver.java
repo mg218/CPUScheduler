@@ -1,4 +1,4 @@
-package lab05;
+package cpuscheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;

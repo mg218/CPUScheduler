@@ -1,4 +1,4 @@
-package lab05;
+package cpuscheduler;
 
 import java.util.ArrayList;
 import java.util.List;
