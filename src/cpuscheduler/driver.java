@@ -9,8 +9,12 @@ import java.util.Scanner;
 public class driver {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		Scanner sc = new Scanner(new File("src/proc.txt"));
-		String alg = sc.nextLine();//First Line is the algorithm identifier
+		Scanner inp = new Scanner(System.in);//For user input
+		System.out.println("Please enter the file you want to use: ");
+		String fileName = inp.nextLine();
+		Scanner sc = new Scanner(new File(fileName));//For file reading
+		System.out.println("Please choose the scheduling algorithm to use [FCFS,PSS,RR]: ");
+		String alg = inp.nextLine();//First Line is the algorithm identifier
 		List<PCB> allProcesses = new ArrayList<>();
 		int id=0;
 		String line;
@@ -26,11 +30,11 @@ public class driver {
 		}
 		
 		sc.close();
+		inp.close();
 		
 		SchedulingAlgorithm sched =null;
 		switch(alg) {
 		case "FCFS" : sched = new FCFS(allProcesses); break;
-		case "SJF" : sched = new SJF(allProcesses); break;
 		case "PSS" : sched = new PSS(allProcesses); break;
 		default: System.err.println("not supported");
 		}
