@@ -26,7 +26,7 @@ public abstract class SchedulingAlgorithm {
 			System.out.println("System time: "+ systemTime);
 			
 			for(PCB proc:allProcs) {
-				if(proc.getArrivalTime()>=systemTime) {
+				if(proc.getArrivalTime()<=systemTime) {
 					readyQueue.add(proc);
 				}
 			}
@@ -36,19 +36,23 @@ public abstract class SchedulingAlgorithm {
 			if(curProcess.getStartTime()<0)
 				curProcess.setStartTime(systemTime);
 			
-			CPU.execute(curProcess, 1);
+			CPU.execute(curProcess, curProcess.getCpuBurst(),curProcess.getBurstIndex(),1);
 			
 			for(PCB proc:readyQueue) {
 				if(proc != curProcess) proc.increaseWaitingTime(1);
 				
 			}
+			
 			systemTime++;
-			if(curProcess.getCpuBurst()==0) {
+			if(curProcess.getCpuBurst()[curProcess.getCpuBurst().length-1]==0) {
 				curProcess.setFinishTime(systemTime);
 				readyQueue.remove(curProcess);
 				finishedProcs.add(curProcess);
 				System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d",
 						curProcess.getName(), systemTime,curProcess.getStartTime(), curProcess.getTurnaroundTime(), curProcess.getWaitingTime());
+			}
+			if(curProcess.getCpuBurst()[curProcess.getBurstIndex()]==0) {
+				curProcess.setBurstIndex(curProcess.getBurstIndex()+1);
 			}
 			
 			System.out.println();
