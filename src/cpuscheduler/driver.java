@@ -16,6 +16,11 @@ public class driver {
 		System.out.println("Please choose the scheduling algorithm to use [FCFS,PSS,RR]: ");
 		String alg = inp.nextLine();//First Line is the algorithm identifier
 		List<PCB> allProcesses = new ArrayList<>();
+		int quant=0;
+		if(alg.equals("RR")) {
+			System.out.println("Enter a quantum time for round robin execution");
+			quant=Integer.parseInt(inp.nextLine());
+		}
 		int id=0;
 		String line;
 		while(sc.hasNextLine()) {
@@ -39,6 +44,7 @@ public class driver {
 		switch(alg) {
 		case "FCFS" : sched = new FCFS(allProcesses); break;
 		case "PSS" : sched = new PSS(allProcesses); break;
+		case "RR" : sched = new RR(allProcesses,quant); break;
 		default: System.err.println("not supported");
 		}
 		sched.schedule();

@@ -10,10 +10,13 @@ public abstract class SchedulingAlgorithm {
 	protected List<PCB> finishedProcs;	//list of terminated processes
 	protected PCB curProcess; //current selected process by the scheduler
 	protected int systemTime; //system time or simulation time steps
+	protected int quantum;//Quantum Time for round robin
+	protected int procCount=0;
  
-      public SchedulingAlgorithm(String name, List<PCB> queue) {
+      public SchedulingAlgorithm(String name, List<PCB> queue,int quantum) {
     	      this.name=name;
     	      this.allProcs = queue;
+    	      this.quantum=quantum;
     	      this.readyQueue = new ArrayList<>();
     	      this.finishedProcs = new ArrayList<>();
       }
