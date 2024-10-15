@@ -23,7 +23,17 @@ public abstract class SchedulingAlgorithm {
 		System.out.println("Scheduling algroithm "+name);
 		
 		while(!allProcs.isEmpty()||!readyQueue.isEmpty()) {
-			System.out.println("System time: "+ systemTime);
+			nextB();
+		}
+		
+
+	}
+	
+	//Selects the next task using the appropriate scheduling algorithm
+      public abstract PCB pickNextProcess();
+      
+      public void nextB() {
+    	  System.out.println("System time: "+ systemTime);
 			
 			for(PCB proc:allProcs) {
 				if(proc.getArrivalTime()<=systemTime) {
@@ -56,13 +66,7 @@ public abstract class SchedulingAlgorithm {
 			}
 			
 			System.out.println();
-		}
-		
-
-	}
-	
-	//Selects the next task using the appropriate scheduling algorithm
-      public abstract PCB pickNextProcess();
+      }
 
       //print simulation step
       public void print() {
