@@ -23,8 +23,11 @@ public class driver {
 			String[] arr = line.split(",\\s+");
 			String name = arr[0];
 			int arrtime= Integer.parseInt(arr[1]);
-			int cpuBurst = Integer.parseInt(arr[2]);
-			int priority = Integer.parseInt(arr[3]);
+			int priority = Integer.parseInt(arr[2]);
+			int[] cpuBurst = new int[arr.length-3];//create an array for CPU/IO Bursts which can differ based on length of CPU bursts/IO bursts
+			for(int i=3;i<arr.length;i++) {
+				cpuBurst[i-3]=Integer.parseInt(arr[i]);
+			}
 			PCB proc = new PCB(name, id++,arrtime, cpuBurst,priority);
 			allProcesses.add(proc);
 		}
