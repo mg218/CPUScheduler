@@ -8,7 +8,7 @@ public class PSS extends SchedulingAlgorithm {
 	
 
 	public PSS(List<PCB> queue) {
-		super("Prioity Scheduling", queue);
+		super("Prioity Scheduling", queue,0);
 		// TODO Auto-generated constructor stub
 	}
 
