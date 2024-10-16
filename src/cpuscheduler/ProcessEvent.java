@@ -18,4 +18,28 @@ public class ProcessEvent {
     event = t;
     process = p;
   }
+
+  //create tostring method
+  @Override
+  public String toString() {
+    String action;
+    switch(this.event) {
+      case CPU:
+      case IO:
+        action = "entered " + this.event.toString();
+        break;
+      case CPUQUEUE:
+      case IOQUEUE:
+        action = "joined " + this.event.toString();
+        break;
+      case TERMINATED:
+        action = "finished";
+        break;
+      case DONE:
+      default:
+        action = "";
+    }
+
+    return process.getName() + " has " + action;
+  }
 }
