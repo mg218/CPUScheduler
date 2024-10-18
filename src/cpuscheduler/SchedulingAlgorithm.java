@@ -3,6 +3,8 @@ package cpuscheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpuscheduler.ProcessEvent.type;
+
 public abstract class SchedulingAlgorithm {
 	protected String name; // scheduling algorithm name
 	protected List<PCB> allProcs; // the initial list of processes
@@ -34,12 +36,14 @@ public abstract class SchedulingAlgorithm {
 	// Selects the next task using the appropriate scheduling algorithm
 	public abstract PCB pickNextProcess();
 
-	public void nextB() {
+	public List<ProcessEvent> nextB() {
+		List<ProcessEvent> events = new ArrayList<>();
 		System.out.println("System time: " + systemTime);
 
 		for (PCB proc : allProcs) {
 			if (proc.getArrivalTime() <= systemTime) {
 				readyQueue.add(proc);
+				events.add(new ProcessEvent(proc,type.CREATED));
 			}
 		}
 		allProcs.removeAll(readyQueue);
@@ -49,6 +53,10 @@ public abstract class SchedulingAlgorithm {
 			curProcess.setStartTime(systemTime);
 
 		CPU.execute(curProcess, curProcess.getCpuBurst(), curProcess.getBurstIndex(), 1);
+		if(curProcess.getBurstIndex()%2==0)
+			events.add(new ProcessEvent(curProcess,type.CPU));
+		else
+			events.add(new ProcessEvent(curProcess,type.IO));
 
 		for (PCB proc : readyQueue) {
 			if (proc != curProcess)
@@ -59,6 +67,7 @@ public abstract class SchedulingAlgorithm {
 		systemTime++;
 		if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
 			curProcess.setFinishTime(systemTime);
+			events.add( new ProcessEvent(curProcess,type.TERMINATED));
 			readyQueue.remove(curProcess);
 			finishedProcs.add(curProcess);
 			System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d", curProcess.getName(),
@@ -66,15 +75,23 @@ public abstract class SchedulingAlgorithm {
 		}
 		if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
 			curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
+			if(curProcess.getBurstIndex()%2==0)
+				new ProcessEvent(curProcess,type.CPUQUEUE);
+			else
+				new ProcessEvent(curProcess,type.IOQUEUE);
 		}
-
+		
 		System.out.println();
+		return events;
 	}
 
 	// print simulation step
 	public void print() {
 		// add code to complete the method
-		System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
+		if(curProcess.getBurstIndex()%2==0)
+			System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
+		else
+			System.out.printf("IO %s\n", curProcess == null ? "Idle" : curProcess.getName());
 		for (PCB proc : readyQueue)
 			System.out.println(proc);
 	}
