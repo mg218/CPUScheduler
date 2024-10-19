@@ -1,13 +1,9 @@
 package cpuscheduler;
 
 public class CPU {
-	// Is inputted an array of bursts with an index and decreases the amount by the
-	// input burst
-	public static void execute(PCB process, int[] burst, int burstIndex, int burstAmount) {
-		int[] bursts = burst;
-		bursts[burstIndex] = bursts[burstIndex] - burstAmount;
-		process.setCpuBurst(bursts);
-
+	public static void execute(PCB process, int cpuBurst) {	
+		process.setCpuBurst(process.getCpuBurst()-cpuBurst);
+		
 	}
 
 }
