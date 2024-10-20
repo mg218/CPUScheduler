@@ -3,19 +3,26 @@ package cpuscheduler;
 import java.io.*;
 import java.util.*;
 
-public class PlayerThread extends Thread {
+public final class PlayerThread extends Thread {
 
     private SchedulingAlgorithm sched = null;
     private int RRQuantum = 3;
     private int speedMS = 1000;
-    private boolean paused;
+    private boolean paused = false;
 
     public List<PCB> allProcesses;
 
     public PlayerThread() {
         super();
+    }
 
-        paused = false;
+    public PlayerThread(String fp, String sa, int s, int q) throws FileNotFoundException  {
+        super();
+
+        loadProcessesFile(fp);
+        setScheduler(sa);
+        setSpeed(s);
+        setRRQuantum(q);
     }
 
     public void setScheduler(String sa) {
@@ -32,12 +39,16 @@ public class PlayerThread extends Thread {
         }
     }
 
-    public void setRRQuantum(int t) {
+    public void setRRQuantum(int t) throws IllegalArgumentException  {
+        if (t < 0) {
+            throw new IllegalArgumentException("RR quantum cannot be negative");
+        }
+
         RRQuantum = t;
         sched = new RR(allProcesses, RRQuantum);
     }
 
-    public void setSpeed(int s) {
+    public void setSpeed(int s) throws IllegalArgumentException {
         if (s < 0) {
             throw new IllegalArgumentException("Speed cannot be negative");
         }
@@ -50,7 +61,6 @@ public class PlayerThread extends Thread {
 
         while (!sched.allProcs.isEmpty() || !sched.readyQueue.isEmpty()) {
             sched.nextB();
-            System.out.println("running scheduler");
 
             try {
                 if (paused) {
@@ -75,6 +85,7 @@ public class PlayerThread extends Thread {
                     start();
                 }
             }
+            case TERMINATED -> {} //do nothing
             default ->
                 throw new IllegalArgumentException("Unexpected value: " + this.getState());
         }
