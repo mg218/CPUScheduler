@@ -15,8 +15,10 @@ public class CPUPlayer extends JFrame {
 	private JMenuBar menuBar;
 	private JMenu mnQuantum;
 
-	private final PlayerThread player;
+	private PlayerThread player;
 	private String scheduler = "FCFS";
+	private int speed = 1000;
+  private int RRQuantum = 3;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
@@ -38,6 +40,8 @@ public class CPUPlayer extends JFrame {
 
 		player = new PlayerThread();
 		player.setScheduler(scheduler);
+		player.setSpeed(speed);
+		player.setRRQuantum(RRQuantum);
 
 		initMenuBar();
 		initControls();
@@ -60,7 +64,7 @@ public class CPUPlayer extends JFrame {
 			var filePath = doFileDialog(System.getProperty("user.home"));
 			System.out.println("opening file: " + filePath);
 			try {
-				player.loadProcessesFile(filePath);
+				player = new PlayerThread(filePath, scheduler, speed, RRQuantum);
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());
 			}
@@ -71,7 +75,7 @@ public class CPUPlayer extends JFrame {
 		// settings menu
 		var mnSettings = new JMenu("Settings");
 		menuBar.add(mnSettings);
-
+		
 		// Algorithm subMenu
 		var mnSchedule = new JMenu("Scheduler Algorithm");
 		mnSettings.add(mnSchedule);
@@ -108,18 +112,30 @@ public class CPUPlayer extends JFrame {
 		var StepListenerCustom = (ActionListener) (ActionEvent e) -> {
 			var speedStr = doInputDialog("Step Speed in milliseconds");
 			try {
-				var speed = Integer.parseInt(speedStr);
-				if (speed > 0) {
-					setSimulationSpeed(speed);
-				}
+				var speedInt = Integer.parseInt(speedStr);
+				setSimulationSpeed(speedInt);
 			} catch (NumberFormatException _e) {
 				JOptionPane.showMessageDialog(this, "speed must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+			} catch (IllegalArgumentException iae) {
+				JOptionPane.showMessageDialog(this, iae.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		};
 
 		var mntmStepCustom = new JMenuItem("Custom...");
 		mntmStepCustom.addActionListener(StepListenerCustom);
 		mnStepTime.add(mntmStepCustom);
+
+		var mntmStep1000 = new JMenuItem("1000 ms");
+		mntmStep1000.addActionListener((ActionEvent e) -> {
+                    setSimulationSpeed(1000);
+                });
+		mnStepTime.add(mntmStep1000);
+
+		var mntmStep100 = new JMenuItem("100 ms");
+		mntmStep100.addActionListener((ActionEvent e) -> {
+                    setSimulationSpeed(100);
+                });
+		mnStepTime.add(mntmStep100);
 
 		// Quantum Time subMenu
 		mnQuantum = new JMenu("Quantum Time(ms)");
@@ -129,12 +145,11 @@ public class CPUPlayer extends JFrame {
 			var timeStr = doInputDialog("Quantum time in milliseconds\n(Round Robin Only)");
 			try {
 				var time = Integer.parseInt(timeStr);
-				if (time > 0) {
-					setQuantumTime(time);
-				}
+				setQuantumTime(time);
 			} catch (NumberFormatException _e) {
-				JOptionPane.showMessageDialog(this, "Quantum time must be a number", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Quantum time must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+			} catch (IllegalArgumentException iae) {
+				JOptionPane.showMessageDialog(this, iae.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		};
 
@@ -156,7 +171,7 @@ public class CPUPlayer extends JFrame {
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.weightx = .5;
-		constraints.weighty = .5;
+		constraints.weighty = Double.MIN_VALUE;
 		add(controls, constraints);
 	}
 
@@ -210,11 +225,13 @@ public class CPUPlayer extends JFrame {
 	}
 
 	protected void setSimulationSpeed(int speed) {
-		player.setSpeed(speed);
+		this.speed = speed;
+		player.setSpeed(this.speed);
 	}
 
 	protected void setQuantumTime(int time) {
-		player.setRRQuantum(time);
+		this.RRQuantum = time;
+		player.setRRQuantum(this.RRQuantum);
 	}
 
 	protected void controlsAction(JButton button) {
@@ -241,6 +258,6 @@ public class CPUPlayer extends JFrame {
 			return "";
 		}
 
-		return dir + "/" + filename;
+		return fd.getDirectory() + filename;
 	}
 }
