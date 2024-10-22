@@ -24,12 +24,10 @@ public class ProcessEvent {
   public String toString() {
     String action;
     switch(this.event) {
-      case CPU:
-      case IO:
+      case CPU, IO:
         action = "entered " + this.event.toString();
         break;
-      case CPUQUEUE:
-      case IOQUEUE:
+      case CPUQUEUE, IOQUEUE:
         action = "joined " + this.event.toString();
         break;
       case TERMINATED:
@@ -37,7 +35,7 @@ public class ProcessEvent {
         break;
       case DONE:
       default:
-        action = "";
+        action = this.event.toString();
     }
 
     return process.getName() + " has " + action;

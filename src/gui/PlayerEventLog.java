@@ -14,7 +14,12 @@ public class PlayerEventLog extends JTextArea {
 	}
 
 	public void addEvent(ProcessEvent event) {
-		this.append(event.toString() + "\n");
+		this.addEvent(event.toString());
+	}
+
+	public void addEvent(String event) {
+		this.append(event + "\n");
+		this.setCaretPosition(this.getDocument().getLength());
 	}
 
 	public void clear() {

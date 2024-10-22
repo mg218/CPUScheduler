@@ -1,11 +1,9 @@
 package gui;
 
-import cpuscheduler.PCB;
 import cpuscheduler.PlayerThread;
-import cpuscheduler.ProcessEvent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
+import java.io.*;
 import javax.swing.*;
 import javax.swing.plaf.DimensionUIResource;
 
@@ -14,11 +12,13 @@ public class CPUPlayer extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar;
 	private JMenu mnQuantum;
+	private PlayerControls controls;
+	private PlayerEventLog eventLog;
 
-	private PlayerThread player;
+	private final PlayerThread player;
 	private String scheduler = "FCFS";
 	private int speed = 1000;
-  private int RRQuantum = 3;
+	private int RRQuantum = 3;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
@@ -38,17 +38,17 @@ public class CPUPlayer extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
-		player = new PlayerThread();
-		player.setScheduler(scheduler);
-		player.setSpeed(speed);
-		player.setRRQuantum(RRQuantum);
-
 		initMenuBar();
 		initControls();
 		initEventLog();
 		initQueues();
 
 		setMinimumSize(new DimensionUIResource(500, 300));
+
+		player = new PlayerThread(eventLog);
+		player.setSpeed(speed);
+		player.setRRQuantum(RRQuantum);
+		player.setScheduler(scheduler);
 	}
 
 	private void initMenuBar() {
@@ -64,18 +64,19 @@ public class CPUPlayer extends JFrame {
 			var filePath = doFileDialog(System.getProperty("user.home"));
 			System.out.println("opening file: " + filePath);
 			try {
-				player = new PlayerThread(filePath, scheduler, speed, RRQuantum);
+				player.loadProcessesFile(filePath);
+				// reset scheduler with new processes
+				player.setScheduler(scheduler);
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());
 			}
-			player.setScheduler(scheduler);
 		});
 		mnFile.add(mntmNewSecnarioFile);
 
 		// settings menu
 		var mnSettings = new JMenu("Settings");
 		menuBar.add(mnSettings);
-		
+
 		// Algorithm subMenu
 		var mnSchedule = new JMenu("Scheduler Algorithm");
 		mnSettings.add(mnSchedule);
@@ -127,14 +128,14 @@ public class CPUPlayer extends JFrame {
 
 		var mntmStep1000 = new JMenuItem("1000 ms");
 		mntmStep1000.addActionListener((ActionEvent e) -> {
-                    setSimulationSpeed(1000);
-                });
+			setSimulationSpeed(1000);
+		});
 		mnStepTime.add(mntmStep1000);
 
 		var mntmStep100 = new JMenuItem("100 ms");
 		mntmStep100.addActionListener((ActionEvent e) -> {
-                    setSimulationSpeed(100);
-                });
+			setSimulationSpeed(100);
+		});
 		mnStepTime.add(mntmStep100);
 
 		// Quantum Time subMenu
@@ -147,7 +148,8 @@ public class CPUPlayer extends JFrame {
 				var time = Integer.parseInt(timeStr);
 				setQuantumTime(time);
 			} catch (NumberFormatException _e) {
-				JOptionPane.showMessageDialog(this, "Quantum time must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Quantum time must be a number", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			} catch (IllegalArgumentException iae) {
 				JOptionPane.showMessageDialog(this, iae.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -163,7 +165,7 @@ public class CPUPlayer extends JFrame {
 		var controlsListener = (ActionListener) (ActionEvent e) -> {
 			controlsAction((JButton) e.getSource());
 		};
-		var controls = new PlayerControls(controlsListener);
+		controls = new PlayerControls(controlsListener);
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 0;
 		constraints.gridy = 2;
@@ -176,7 +178,7 @@ public class CPUPlayer extends JFrame {
 	}
 
 	private void initEventLog() {
-		var eventLog = new PlayerEventLog();
+		eventLog = new PlayerEventLog();
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 3;
 		constraints.gridy = 0;
@@ -185,9 +187,7 @@ public class CPUPlayer extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
-		add(eventLog, constraints);
-
-		eventLog.addEvent(new ProcessEvent(new PCB("James", 69, 3, new int[] {}, 3), ProcessEvent.type.CPUQUEUE));
+		add(new JScrollPane(eventLog), constraints);
 	}
 
 	private void initQueues() {
@@ -201,6 +201,7 @@ public class CPUPlayer extends JFrame {
 		CpuConstraints.weightx = 1;
 		CpuConstraints.weighty = 1;
 		add(CpuQueue, CpuConstraints);
+
 		var IoQueue = new DeviceQueueView("IO");
 		var IoConstraints = new GridBagConstraints();
 		IoConstraints.gridx = 1;
