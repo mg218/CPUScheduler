@@ -79,15 +79,19 @@ public class PlayerThread extends Thread {
 		}
 	}
 
-	private synchronized void resume() {
+	private synchronized void unpause() {
 		notify();
+	}
+
+	public void pause() {
+		paused = true;
 	}
 
 	public void play() {
 		paused = false;
 
 		switch (this.getState()) {
-		case WAITING -> resume();
+		case WAITING -> unpause();
 		case NEW -> {
 			if (allProcesses != null) {
 				start();
@@ -98,10 +102,6 @@ public class PlayerThread extends Thread {
 		default -> throw new IllegalArgumentException("Unexpected value: " + this.getState());
 		}
 
-	}
-
-	public void pause() {
-		paused = true;
 	}
 
 	public void step() {
