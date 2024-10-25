@@ -17,8 +17,8 @@ public abstract class SchedulingAlgorithm {
 	protected int quantum;// Quantum Time for round robin
 	protected int procCount = 0;// works as an index for process switching in round robin
 	protected int procCountLast = 0;// keeps track of last executed process useful for RR
-	protected int ioCpuLast = 0; // Keep track if the last executed process was IO or CPU Used for Event
-									// processing with round robin
+	
+									
 
 	public SchedulingAlgorithm(String name, List<PCB> queue, int quantum) {
 		this.name = name;
@@ -134,5 +134,17 @@ public abstract class SchedulingAlgorithm {
 			for(PCB procs: ioQueue)
 				System.out.println(procs);
 		}
+	}
+	public PCB getCurProcess() {
+		return curProcess;
+	}
+	public List<PCB> getReadyQueue(){
+		return readyQueue;
+	}
+	public PCB getCurIO() {
+		return curIO;
+	}
+	public List<PCB> getCurIoQueue(){
+		return ioQueue;
 	}
 }

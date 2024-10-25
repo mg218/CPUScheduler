@@ -113,42 +113,42 @@ public class PlayerThread extends Thread {
 	public void loadProcessesFile(String filePath) throws FileNotFoundException {
 		allProcesses = new ArrayList<>();
 
-        try (var sc = new Scanner(new File(filePath))) {
-            int id = 0;
-            String line;
-            while (sc.hasNextLine()) {
-							line = sc.nextLine();
-							String[] arr = line.split(",\\s+");
-							String name = arr[0];
-							int arrtime = Integer.parseInt(arr[1]);
-							int priority = Integer.parseInt(arr[2]);
-							int[] burst = new int[arr.length - 3];// create an array for CPU/IO Bursts which can differ based on
-																		// length of CPU bursts/IO bursts
-							int[] cpuBurst= new int[(burst.length/2)+1];
-							int[] ioBurst = new int[burst.length/2];
-							for (int i = 3; i < arr.length; i++) {
-								burst[i - 3] = Integer.parseInt(arr[i]);
-							}
-							for(int i=0;i<burst.length;i++) {
-								int cpuc=0,ioc=0;
-								if(i%2==0) {
-									cpuBurst[cpuc]=burst[i];
-									cpuc++;
-								}else {
-									ioBurst[ioc]=burst[i];
-									ioc++;
-								}
-							}
-
-							PCB proc = new PCB(name, id++, arrtime, cpuBurst,ioBurst, priority);
-
-                allProcesses.add(proc);
-            }
-        }
-    }
+		try (var sc = new Scanner(new File(filePath))) {
+			int id = 0;
+			String line;
+			while (sc.hasNextLine()) {
+				line = sc.nextLine();
+				String[] arr = line.split(",\\s+");
+				String name = arr[0];
+				int arrtime = Integer.parseInt(arr[1]);
+				int priority = Integer.parseInt(arr[2]);
+				int[] burst = new int[arr.length - 3];// create an array for CPU/IO Bursts which can differ based on
+															// length of CPU bursts/IO bursts
+				int[] cpuBurst= new int[(burst.length/2)+1];
+				int[] ioBurst = new int[burst.length/2];
+				for (int i = 3; i < arr.length; i++) {
+					burst[i - 3] = Integer.parseInt(arr[i]);
+				}
+				int cpuc=0,ioc=0;
+				for(int i=0;i<burst.length;i++) {
+					
+					if(i%2==0) {
+						cpuBurst[cpuc]=burst[i];
+						cpuc++;
+					}else {
+						ioBurst[ioc]=burst[i];
+						ioc++;
+					}
+				}
+						
+				PCB proc = new PCB(name, id++, arrtime, cpuBurst,ioBurst, priority);
+				allProcesses.add(proc);
+			}
+		}
+	}
 
 	private void logEvents(List<ProcessEvent> events) {
-		log.addEvent("System time: " + sched.systemTime);
+		//log.addEvent("System time: " + sched.systemTime);
 		for (var event : events) {
 
 			if (event.event == type.DONE) {
