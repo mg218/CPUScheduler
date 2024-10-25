@@ -7,13 +7,14 @@ public class PCB {
 	private int id; // process id
 	private int arrivalTime; // arrival time of the process
 	private int[] cpuBurst; // CPU burst length in unit time
+	private int[] ioBurst;
 	private int priority; // priority level of the process
 	// the stats of the process execution
-	private int startTime, finishTime, turnaroundTime, waitingTime;
-	private int burstIndex;
+	private int startTime, finishTime, turnaroundTime, waitingTime,ioFinishTime;
+	private int burstIndex,ioBurstIndex;
 
 	// constructor
-	public PCB(String name, int id, int arrivalTime, int[] cpuBurst, int priority) {
+	public PCB(String name, int id, int arrivalTime, int[] cpuBurst, int[] ioBurst, int priority) {
 		super();
 		this.name = name;
 		this.id = id;
@@ -23,6 +24,9 @@ public class PCB {
 		this.startTime = -1;
 		this.finishTime = -1;
 		this.burstIndex = 0;
+		this.setIoBurst(ioBurst);
+		this.setIoBurstIndex(0);
+		this.setIoFinishTime(-1);
 	}
 
 	public String getName() {
@@ -112,18 +116,45 @@ public class PCB {
 
 	}
 
+	public int getIoBurstIndex() {
+		return ioBurstIndex;
+	}
+
+	public void setIoBurstIndex(int ioBurstIndex) {
+		this.ioBurstIndex = ioBurstIndex;
+	}
+
+	public int getIoFinishTime() {
+		return ioFinishTime;
+	}
+
+	public void setIoFinishTime(int ioFinishTime) {
+		this.ioFinishTime = ioFinishTime;
+	}
+
+	public int[] getIoBurst() {
+		return ioBurst;
+	}
+
+	public void setIoBurst(int[] ioBurst) {
+		this.ioBurst = ioBurst;
+	}
+
 	@Override
 	public String toString() {
 		String outp = "PCB [name=" + name + ", id=" + id + ", arrivalTime= " + arrivalTime + ", Priority= " + priority
 				+ ", ";
 		// prints out all the bursts
-		for (int i = 0; i < cpuBurst.length; i++) {
+		int ioc=0,cpuc=0;
+		for (int i = 0; i < cpuBurst.length+ioBurst.length; i++) {
 			if (i % 2 == 0) {
 				// if the process is an even index it is a cpu burst
-				outp += "CPUburst= " + cpuBurst[i] + ", ";
+				outp += "CPUburst= " + cpuBurst[cpuc] + ", ";
+				cpuc++;
 			} else {
 				// if the process is an odd index it is an IO burst
-				outp += "IO Burst= " + cpuBurst[i] + ", ";
+				outp += "IO Burst= " + ioBurst[ioc] + ", ";
+				ioc++;
 			}
 		}
 		outp += "]";
