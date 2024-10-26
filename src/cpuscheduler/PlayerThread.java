@@ -12,6 +12,7 @@ public class PlayerThread extends Thread {
 	private int speedMS = 1000;
 	private boolean paused = true;
 	private boolean done = true;
+	private boolean newData = true;
 
 	private final PlayerEventLog log;
 
@@ -60,6 +61,36 @@ public class PlayerThread extends Thread {
 		speedMS = s;
 	}
 
+	public boolean isNewData() {
+		var temp = newData;
+		newData = false;
+		return temp;
+	}
+
+	public PCB getCurProcess(String type) {
+		if(sched == null) return null;
+		if(type.equals("CPU")) {
+			return sched.getCurProcess();
+		} else {
+			return sched.getCurIO();
+		}
+
+	}
+
+	public List<PCB> getCurQueue(String type) {
+		if(sched == null) return null;
+		//make new array lists so removing the current process doesn't modify the original
+		if(type.equals("CPU")) {
+			var temp = new ArrayList<PCB>(sched.getReadyQueue());
+			temp.remove(sched.getCurProcess());
+			return temp; 
+		} else {
+			var temp = new ArrayList<PCB>(sched.getCurIoQueue());
+			temp.remove(sched.getCurIO());
+			return temp;
+		}
+	}
+
 	@Override
 	public synchronized void run() {
 		while (true) {
@@ -76,6 +107,7 @@ public class PlayerThread extends Thread {
 			}
 
 			logEvents(sched.nextB());
+			newData = true;
 		}
 	}
 
@@ -107,6 +139,7 @@ public class PlayerThread extends Thread {
 	public void step() {
 		if (!done && paused) {
 			logEvents(sched.nextB());
+			newData = true;
 		}
 	}
 
@@ -148,7 +181,7 @@ public class PlayerThread extends Thread {
 	}
 
 	private void logEvents(List<ProcessEvent> events) {
-		//log.addEvent("System time: " + sched.systemTime);
+		log.addEvent("System time: " + sched.systemTime);
 		for (var event : events) {
 
 			if (event.event == type.DONE) {

@@ -10,6 +10,7 @@ import javax.swing.plaf.DimensionUIResource;
 public class CPUPlayer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+
 	private JMenuBar menuBar;
 	private JMenu mnQuantum;
 	private PlayerControls controls;
@@ -25,9 +26,8 @@ public class CPUPlayer extends JFrame {
 			try {
 				var gui = new CPUPlayer();
 				gui.setVisible(true);
-				Thread.sleep(1L);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -41,14 +41,15 @@ public class CPUPlayer extends JFrame {
 		initMenuBar();
 		initControls();
 		initEventLog();
-		initQueues();
-
-		setMinimumSize(new DimensionUIResource(500, 300));
 
 		player = new PlayerThread(eventLog);
 		player.setSpeed(speed);
 		player.setRRQuantum(RRQuantum);
 		player.setScheduler(scheduler);
+
+		initQueues();
+
+		setMinimumSize(new DimensionUIResource(500, 300));
 	}
 
 	private void initMenuBar() {
@@ -62,14 +63,14 @@ public class CPUPlayer extends JFrame {
 		var mntmNewSecnarioFile = new JMenuItem("Open scenario file");
 		mntmNewSecnarioFile.addActionListener((ActionEvent e) -> {
 			var filePath = doFileDialog(System.getProperty("user.home"));
-			System.out.println("opening file: " + filePath);
 			try {
 				player.loadProcessesFile(filePath);
-				// reset scheduler with new processes
-				player.setScheduler(scheduler);
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());
 			}
+			// reset scheduler with new processes
+			player.setScheduler(scheduler);
+			eventLog.addEvent("Scenario file loaded: " + filePath);
 		});
 		mnFile.add(mntmNewSecnarioFile);
 
@@ -169,10 +170,10 @@ public class CPUPlayer extends JFrame {
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		constraints.gridwidth = 4;
+		constraints.gridwidth = 3;
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
-		constraints.weightx = .5;
+		constraints.weightx = 0.0;
 		constraints.weighty = Double.MIN_VALUE;
 		add(controls, constraints);
 	}
@@ -180,38 +181,27 @@ public class CPUPlayer extends JFrame {
 	private void initEventLog() {
 		eventLog = new PlayerEventLog();
 		var constraints = new GridBagConstraints();
-		constraints.gridx = 3;
+		constraints.gridx = 2;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 2;
 		constraints.fill = GridBagConstraints.BOTH;
-		constraints.weightx = 1;
-		constraints.weighty = 1;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
 		add(new JScrollPane(eventLog), constraints);
 	}
 
 	private void initQueues() {
-		var CpuQueue = new DeviceQueueView("CPU");
+		var CpuQueue = new DeviceQueueView(player, 1, 1);
 		var CpuConstraints = new GridBagConstraints();
 		CpuConstraints.gridx = 0;
 		CpuConstraints.gridy = 0;
-		CpuConstraints.gridwidth = 1;
+		CpuConstraints.gridwidth = 2;
 		CpuConstraints.gridheight = 2;
 		CpuConstraints.fill = GridBagConstraints.BOTH;
-		CpuConstraints.weightx = 1;
-		CpuConstraints.weighty = 1;
+		CpuConstraints.weightx = 0.3;
+		CpuConstraints.weighty = 1.0;
 		add(CpuQueue, CpuConstraints);
-
-		var IoQueue = new DeviceQueueView("IO");
-		var IoConstraints = new GridBagConstraints();
-		IoConstraints.gridx = 1;
-		IoConstraints.gridy = 0;
-		IoConstraints.gridwidth = 1;
-		IoConstraints.gridheight = 2;
-		IoConstraints.fill = GridBagConstraints.BOTH;
-		IoConstraints.weightx = 1;
-		IoConstraints.weighty = 1;
-		add(IoQueue, IoConstraints);
 	}
 
 	protected void setSchedulerAlgorithm(JRadioButtonMenuItem source) {
