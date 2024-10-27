@@ -16,9 +16,8 @@ public abstract class SchedulingAlgorithm {
 	protected int systemTime; // system time or simulation time steps
 	protected int quantum;// Quantum Time for round robin
 	protected int procCount = 0;// works as an index for process switching in round robin
-	protected int procCountLast = 0;// keeps track of last executed process useful for RR
-	
-									
+	protected int procCountLast = 0;
+	protected PCB lastIO,lastCPU; //holds on to what the most recently executed IO/CPU process used in event handling
 
 	public SchedulingAlgorithm(String name, List<PCB> queue, int quantum) {
 		this.name = name;
@@ -33,7 +32,7 @@ public abstract class SchedulingAlgorithm {
 
 		System.out.println("Scheduling algroithm " + name);
 
-		while (!allProcs.isEmpty() || !readyQueue.isEmpty()||!ioQueue.isEmpty()) {
+		while (!allProcs.isEmpty() || !readyQueue.isEmpty() || !ioQueue.isEmpty()) {
 			nextB();
 		}
 
@@ -54,20 +53,25 @@ public abstract class SchedulingAlgorithm {
 			}
 		}
 		// remove the running processes from the all queue
-		if(!readyQueue.isEmpty()) {
+		if (!readyQueue.isEmpty()) {
 			allProcs.removeAll(readyQueue);
 			curProcess = pickNextProcess();
 		}
-		if(ioQueue.isEmpty()==false)
+		if (ioQueue.isEmpty() == false)
 			curIO = ioQueue.get(0);
 		// checks to see if the queue and process changed and create a log if they do
-		
 
 		print();
 		if (curProcess.getStartTime() < 0)
 			curProcess.setStartTime(systemTime);
-		
-		if(!readyQueue.isEmpty())
+		//if the CPU starts executing a new process create an event
+		if(!readyQueue.isEmpty()&&curProcess!=lastCPU)
+			events.add(new ProcessEvent(curProcess,type.CPU));
+		//if the IO starts executing a new process create an event
+		if(!ioQueue.isEmpty()&&curIO!=lastIO)
+			events.add(new ProcessEvent(curIO,type.IO));	
+
+		if (!readyQueue.isEmpty())
 			CPU.execute(curProcess, curProcess.getCpuBurst(), curProcess.getBurstIndex(), 1);
 		if (ioQueue.isEmpty() == false)
 			IO.execute(curIO, curIO.getIoBurst(), curIO.getIoBurstIndex(), 1);
@@ -86,16 +90,16 @@ public abstract class SchedulingAlgorithm {
 				readyQueue.add(curIO);
 				events.add(new ProcessEvent(curIO, type.CPUQUEUE));
 				System.out.println("IO for process " + curIO.getName() + " terminated at " + curIO.getIoFinishTime());
-			}else if (curIO.getIoBurst()[curIO.getIoBurstIndex()] == 0) {
+			} else if (curIO.getIoBurst()[curIO.getIoBurstIndex()] == 0) {
 				curIO.setIoBurstIndex(curIO.getIoBurstIndex() + 1);
 				ioQueue.remove(curIO);
 				readyQueue.add(curIO);
+				events.add(new ProcessEvent(curIO, type.CPUQUEUE));
 			}
 		}
-		
 
 		// finish up process
-		if(!readyQueue.isEmpty()) {
+		if (!readyQueue.isEmpty()) {
 			if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
 				curProcess.setFinishTime(systemTime);
 				events.add(new ProcessEvent(curProcess, type.TERMINATED));
@@ -104,47 +108,54 @@ public abstract class SchedulingAlgorithm {
 				readyQueue.remove(curProcess);
 				finishedProcs.add(curProcess);
 				System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d", curProcess.getName(),
-						systemTime, curProcess.getStartTime(), curProcess.getTurnaroundTime(), curProcess.getWaitingTime());
-			}else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
+						systemTime, curProcess.getStartTime(), curProcess.getTurnaroundTime(),
+						curProcess.getWaitingTime());
+			} else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
 				curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
 				readyQueue.remove(curProcess);
 				ioQueue.add(curProcess);
 				events.add(new ProcessEvent(curProcess, type.IOQUEUE));
 			}
-		
+
 		}
 		procCountLast = procCount;// Update the most recently executed process
-		
+		lastIO=curIO;
+		lastCPU=curProcess;
+
 		System.out.println();
-		System.out.println(readyQueue.size()+" "+ioQueue.size());
+		
 		return events;
 	}
 
 	// print simulation step
 	public void print() {
 		// add code to complete the method
-			System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
-			if(ioQueue.isEmpty()==false)
-				System.out.printf("IO %s\n", curProcess == null ? "Idle" : curIO.getName());
+		System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
+		if (ioQueue.isEmpty() == false)
+			System.out.printf("IO %s\n", curProcess == null ? "Idle" : curIO.getName());
 		for (PCB proc : readyQueue)
 			System.out.println(proc);
 		System.out.println();
 		System.out.println("IO");
-		if(ioQueue.isEmpty()==false) {
-			for(PCB procs: ioQueue)
+		if (ioQueue.isEmpty() == false) {
+			for (PCB procs : ioQueue)
 				System.out.println(procs);
 		}
 	}
+
 	public PCB getCurProcess() {
 		return curProcess;
 	}
-	public List<PCB> getReadyQueue(){
+
+	public List<PCB> getReadyQueue() {
 		return readyQueue;
 	}
+
 	public PCB getCurIO() {
 		return curIO;
 	}
-	public List<PCB> getCurIoQueue(){
+
+	public List<PCB> getCurIoQueue() {
 		return ioQueue;
 	}
 }
