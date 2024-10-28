@@ -35,6 +35,8 @@ public class CPUPlayer extends JFrame {
 	public CPUPlayer() {
 		super();
 
+		setTitle("CPU Scheduler");
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
@@ -160,6 +162,17 @@ public class CPUPlayer extends JFrame {
 		mntmQuantumCustom.addActionListener(QuantumListenerCustom);
 		mnQuantum.add(mntmQuantumCustom);
 		mnQuantum.setVisible(rdbtnRR.isSelected());
+
+		// help menu
+		var mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+
+		var mntmAbout = new JMenuItem("About");
+		var aboutListener = (ActionListener) (ActionEvent e) -> {
+			JOptionPane.showMessageDialog(this, "Made By:\nJoshua Miertschin\nMason Goss", "About" , JOptionPane.INFORMATION_MESSAGE);
+		};
+		mntmAbout.addActionListener(aboutListener);
+		mnHelp.add(mntmAbout);
 	}
 
 	private void initControls() {
