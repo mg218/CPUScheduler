@@ -2,6 +2,8 @@ package cpuscheduler;
 
 import cpuscheduler.ProcessEvent.type;
 import gui.PlayerEventLog;
+import gui.StatusBar;
+
 import java.io.*;
 import java.util.*;
 
@@ -15,33 +17,37 @@ public class PlayerThread extends Thread {
 	private boolean newData = true;
 
 	private final PlayerEventLog log;
+	private final StatusBar status;
 
 	public List<PCB> allProcesses;
 
-	public PlayerThread(PlayerEventLog eventLog) {
+	public PlayerThread(PlayerEventLog eventLog, StatusBar statusbar) {
 		super();
 
+		allProcesses = new ArrayList<>();
+
 		log = eventLog;
+		status = statusbar;
 	}
 
 	public void setScheduler(String sa) {
 		pause();
 		// create copy of processes list to prevent scheduler getting reference to ours
-		if (allProcesses != null) {
-			var allProcs = new ArrayList<PCB>(allProcesses);
-			// turn the string sa into a constructor of the respective scheduler
-			switch (sa) {
-			case "FCFS" -> sched = new FCFS(allProcs);
-			case "PS" -> sched = new PSS(allProcs);
-			case "RR" -> sched = new RR(allProcs, RRQuantum);
-			default -> throw new IllegalArgumentException("Invalid scheduler");
-			}
-
-			// this is our reset so we need to also clear the event log and reset the player
-			// if in play
-			log.clear();
-			done = allProcesses.isEmpty();
+		var allProcs = new ArrayList<PCB>(allProcesses);
+		// turn the string sa into a constructor of the respective scheduler
+		switch (sa) {
+		case "FCFS" -> sched = new FCFS(allProcs);
+		case "PS" -> sched = new PSS(allProcs);
+		case "RR" -> sched = new RR(allProcs, RRQuantum);
+		default -> throw new IllegalArgumentException("Invalid scheduler");
 		}
+
+		// this is our reset so we need to also clear the event log and reset the player
+		// if in play
+		log.clear();
+		status.setTime(0);
+		status.setScheduler(sa);
+		done = allProcesses.isEmpty();
 	}
 
 	public void setRRQuantum(int t) throws IllegalArgumentException {
@@ -106,8 +112,7 @@ public class PlayerThread extends Thread {
 				System.err.println("Interrupted");
 			}
 
-			logEvents(sched.nextB());
-			newData = true;
+			stepScheduler();
 		}
 	}
 
@@ -138,8 +143,7 @@ public class PlayerThread extends Thread {
 
 	public void step() {
 		if (!done && paused) {
-			logEvents(sched.nextB());
-			newData = true;
+			stepScheduler();
 		}
 	}
 
@@ -178,6 +182,13 @@ public class PlayerThread extends Thread {
 				allProcesses.add(proc);
 			}
 		}
+	}
+
+	private void stepScheduler() {
+		logEvents(sched.nextB());
+		newData = true;
+
+		status.setTime(sched.systemTime);
 	}
 
 	private void logEvents(List<ProcessEvent> events) {

@@ -15,6 +15,7 @@ public class CPUPlayer extends JFrame {
 	private JMenu mnQuantum;
 	private PlayerControls controls;
 	private PlayerEventLog eventLog;
+	private StatusBar statusBar;
 
 	private final PlayerThread player;
 	private String scheduler = "FCFS";
@@ -42,9 +43,10 @@ public class CPUPlayer extends JFrame {
 
 		initMenuBar();
 		initControls();
+		initStatusBar();
 		initEventLog();
 
-		player = new PlayerThread(eventLog);
+		player = new PlayerThread(eventLog, statusBar);
 		player.setSpeed(speed);
 		player.setRRQuantum(RRQuantum);
 		player.setScheduler(scheduler);
@@ -182,7 +184,7 @@ public class CPUPlayer extends JFrame {
 		controls = new PlayerControls(controlsListener);
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		constraints.gridwidth = 3;
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
@@ -195,7 +197,7 @@ public class CPUPlayer extends JFrame {
 		eventLog = new PlayerEventLog();
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 2;
-		constraints.gridy = 0;
+		constraints.gridy = 1;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 2;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -208,13 +210,26 @@ public class CPUPlayer extends JFrame {
 		var CpuQueue = new DeviceQueueView(player, 1, 1);
 		var CpuConstraints = new GridBagConstraints();
 		CpuConstraints.gridx = 0;
-		CpuConstraints.gridy = 0;
+		CpuConstraints.gridy = 1;
 		CpuConstraints.gridwidth = 2;
 		CpuConstraints.gridheight = 2;
 		CpuConstraints.fill = GridBagConstraints.BOTH;
 		CpuConstraints.weightx = 0.3;
 		CpuConstraints.weighty = 1.0;
 		add(CpuQueue, CpuConstraints);
+	}
+
+	private void initStatusBar() {
+		statusBar = new StatusBar();
+		var statusConstraints = new GridBagConstraints();
+		statusConstraints.gridx = 0;
+		statusConstraints.gridy = 0;
+		statusConstraints.gridwidth = 3;
+		statusConstraints.gridheight = 1;
+		statusConstraints.fill = GridBagConstraints.BOTH;
+		statusConstraints.weightx = 0.3;
+		statusConstraints.weighty = Double.MIN_VALUE;
+		add(statusBar, statusConstraints);
 	}
 
 	protected void setSchedulerAlgorithm(JRadioButtonMenuItem source) {
