@@ -18,6 +18,7 @@ public abstract class SchedulingAlgorithm {
 	protected int procCount = 0;// works as an index for process switching in round robin
 	protected int procCountLast = 0;
 	protected PCB lastIO,lastCPU; //holds on to what the most recently executed IO/CPU process used in event handling
+	protected double cpuUse,ioUse;//holds info for how many frames cpu and IO are active for
 	
 
 	public SchedulingAlgorithm(String name, List<PCB> queue, int quantum) {
@@ -36,7 +37,9 @@ public abstract class SchedulingAlgorithm {
 		while (!allProcs.isEmpty() || !readyQueue.isEmpty() || !ioQueue.isEmpty()) {
 			nextB();
 		}
-	
+		print();
+		System.out.println(cpuUse+" "+ioUse);
+		System.out.println("CPU utilization= "+cpuUtilization()+"%, IO Utilization= "+ ioUtilization()+"%");
 
 	}
 
@@ -59,7 +62,7 @@ public abstract class SchedulingAlgorithm {
 			allProcs.removeAll(readyQueue);
 			curProcess = pickNextProcess();
 		}
-		if (ioQueue.isEmpty() == false)
+		if (!ioQueue.isEmpty())
 			curIO = ioQueue.get(0);
 		// checks to see if the queue and process changed and create a log if they do
 
@@ -73,10 +76,14 @@ public abstract class SchedulingAlgorithm {
 		if(!ioQueue.isEmpty()&&curIO!=lastIO)
 			events.add(new ProcessEvent(curIO,type.IO));	
 
-		if (!readyQueue.isEmpty())
+		if (!readyQueue.isEmpty()) {
 			CPU.execute(curProcess, curProcess.getCpuBurst(), curProcess.getBurstIndex(), 1);
-		if (ioQueue.isEmpty() == false)
+			cpuUse++;
+		}
+		if (ioQueue.isEmpty() == false) {
 			IO.execute(curIO, curIO.getIoBurst(), curIO.getIoBurstIndex(), 1);
+			ioUse++;
+		}
 
 		for (PCB proc : readyQueue) {
 			if (proc != curProcess)
@@ -121,9 +128,12 @@ public abstract class SchedulingAlgorithm {
 			}
 
 		}
-		procCountLast = procCount;// Update the most recently executed process
-		lastIO=curIO;
-		lastCPU=curProcess;
+		
+//		procCountLast = procCount;// Update the most recently executed process
+		if(curIO!=null)
+			lastIO=curIO;
+		if(curProcess!=null)
+			lastCPU=curProcess;
 
 		System.out.println();
 		
@@ -161,5 +171,11 @@ public abstract class SchedulingAlgorithm {
 
 	public List<PCB> getCurIoQueue() {
 		return ioQueue;
+	}
+	public double ioUtilization() {
+		return (ioUse/systemTime)*100;
+	}
+	public double cpuUtilization() {
+		return (cpuUse/systemTime)*100;
 	}
 }
