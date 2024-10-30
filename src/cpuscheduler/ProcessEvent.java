@@ -7,6 +7,7 @@ public class ProcessEvent {
     CPUQUEUE,
     IO,
     IOQUEUE,
+    INTERRUPTED,
     TERMINATED,
     DONE
   };
@@ -30,8 +31,8 @@ public class ProcessEvent {
       case CPUQUEUE, IOQUEUE:
         action = "joined " + this.event.toString();
         break;
-      case TERMINATED:
-        action = "finished";
+      case INTERRUPTED:
+        action = "was Interrupted";
         break;
       case DONE:
       default:
