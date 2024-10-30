@@ -189,6 +189,8 @@ public class PlayerThread extends Thread {
 		newData = true;
 
 		status.setTime(sched.systemTime);
+		status.setCpuUtilization(sched.cpuUtilization());
+		status.setIoUtilization(sched.ioUtilization());
 	}
 
 	private void logEvents(List<ProcessEvent> events) {
