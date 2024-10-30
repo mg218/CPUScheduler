@@ -12,6 +12,7 @@ public class PCB {
 	// the stats of the process execution
 	private int startTime, finishTime, turnaroundTime, waitingTime,ioFinishTime;
 	private int burstIndex,ioBurstIndex;
+	private int exCount;
 
 	// constructor
 	public PCB(String name, int id, int arrivalTime, int[] cpuBurst, int[] ioBurst, int priority) {
@@ -27,6 +28,7 @@ public class PCB {
 		this.setIoBurst(ioBurst);
 		this.setIoBurstIndex(0);
 		this.setIoFinishTime(-1);
+		this.exCount=0;
 	}
 
 	public String getName() {
@@ -138,6 +140,16 @@ public class PCB {
 
 	public void setIoBurst(int[] ioBurst) {
 		this.ioBurst = ioBurst;
+	}
+
+	public void increaseExCount() {
+		this.exCount++;
+	}
+	public int getExCount() {
+		return exCount;
+	}
+	public void resetExCount() {
+		exCount=0;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ public class CPU {
 	public static void execute(PCB process, int[] burst, int burstIndex, int burstAmount) {
 		int[] bursts = burst;
 		bursts[burstIndex] = bursts[burstIndex] - burstAmount;
+		process.increaseExCount();
 		process.setCpuBurst(bursts);
 
 	}

@@ -18,6 +18,7 @@ public abstract class SchedulingAlgorithm {
 	protected int procCount = 0;// works as an index for process switching in round robin
 	protected int procCountLast = 0;
 	protected PCB lastIO,lastCPU; //holds on to what the most recently executed IO/CPU process used in event handling
+	
 
 	public SchedulingAlgorithm(String name, List<PCB> queue, int quantum) {
 		this.name = name;
@@ -35,6 +36,7 @@ public abstract class SchedulingAlgorithm {
 		while (!allProcs.isEmpty() || !readyQueue.isEmpty() || !ioQueue.isEmpty()) {
 			nextB();
 		}
+	
 
 	}
 
@@ -103,7 +105,7 @@ public abstract class SchedulingAlgorithm {
 			if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
 				curProcess.setFinishTime(systemTime);
 				events.add(new ProcessEvent(curProcess, type.TERMINATED));
-				if (readyQueue.size() == 1)
+				if (readyQueue.size() == 1&&ioQueue.isEmpty())
 					events.add(new ProcessEvent(curProcess, type.DONE));
 				readyQueue.remove(curProcess);
 				finishedProcs.add(curProcess);
@@ -113,6 +115,7 @@ public abstract class SchedulingAlgorithm {
 			} else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
 				curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
 				readyQueue.remove(curProcess);
+				curProcess.resetExCount();
 				ioQueue.add(curProcess);
 				events.add(new ProcessEvent(curProcess, type.IOQUEUE));
 			}
@@ -130,7 +133,8 @@ public abstract class SchedulingAlgorithm {
 	// print simulation step
 	public void print() {
 		// add code to complete the method
-		System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
+		if(!readyQueue.isEmpty())
+			System.out.printf("CPU %s\n", curProcess == null ? "Idle" : curProcess.getName());
 		if (ioQueue.isEmpty() == false)
 			System.out.printf("IO %s\n", curProcess == null ? "Idle" : curIO.getName());
 		for (PCB proc : readyQueue)
