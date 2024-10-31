@@ -1,8 +1,7 @@
 package cpuscheduler;
 
 import cpuscheduler.ProcessEvent.type;
-import gui.PlayerEventLog;
-import gui.StatusBar;
+import gui.*;
 
 import java.io.*;
 import java.util.*;
@@ -18,16 +17,18 @@ public class PlayerThread extends Thread {
 
 	private final PlayerEventLog log;
 	private final StatusBar status;
+	private final ProcessTableModel tableModel;
 
 	public List<PCB> allProcesses;
 
-	public PlayerThread(PlayerEventLog eventLog, StatusBar statusbar) {
+	public PlayerThread(PlayerEventLog eventLog, StatusBar statusbar, ProcessTableModel processTableModel) {
 		super();
 
 		allProcesses = new ArrayList<>();
 
 		log = eventLog;
 		status = statusbar;
+		tableModel = processTableModel;
 	}
 
 	public void setScheduler(String sa) {
@@ -182,6 +183,8 @@ public class PlayerThread extends Thread {
 				allProcesses.add(proc);
 			}
 		}
+
+		tableModel.setProcesses(allProcesses);
 	}
 
 	private void stepScheduler() {
@@ -191,6 +194,8 @@ public class PlayerThread extends Thread {
 		status.setTime(sched.systemTime);
 		status.setCpuUtilization(sched.cpuUtilization());
 		status.setIoUtilization(sched.ioUtilization());
+
+		tableModel.refresh();
 	}
 
 	private void logEvents(List<ProcessEvent> events) {

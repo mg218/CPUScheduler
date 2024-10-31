@@ -16,6 +16,7 @@ public class CPUPlayer extends JFrame {
 	private PlayerControls controls;
 	private PlayerEventLog eventLog;
 	private StatusBar statusBar;
+	private ProcessTableModel processTableModel;
 
 	private final PlayerThread player;
 	private String scheduler = "FCFS";
@@ -34,19 +35,18 @@ public class CPUPlayer extends JFrame {
 	}
 
 	public CPUPlayer() {
-		super();
-
-		setTitle("CPU Scheduler");
+		super("CPU Scheduler");
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
 		initMenuBar();
 		initControls();
-		initStatusBar();
 		initEventLog();
+		initStatusBar();
+		initProcessTable();
 
-		player = new PlayerThread(eventLog, statusBar);
+		player = new PlayerThread(eventLog, statusBar, processTableModel);
 		player.setSpeed(speed);
 		player.setRRQuantum(RRQuantum);
 		player.setScheduler(scheduler);
@@ -184,7 +184,7 @@ public class CPUPlayer extends JFrame {
 		controls = new PlayerControls(controlsListener);
 		var constraints = new GridBagConstraints();
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		constraints.gridwidth = 3;
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
@@ -230,6 +230,22 @@ public class CPUPlayer extends JFrame {
 		statusConstraints.weightx = 0.3;
 		statusConstraints.weighty = Double.MIN_VALUE;
 		add(statusBar, statusConstraints);
+	}
+
+	private void initProcessTable() {
+		processTableModel = new ProcessTableModel();
+
+		var processTable = new JTable(processTableModel);
+
+		var processTableConstraints = new GridBagConstraints();
+		processTableConstraints.gridx = 0;
+		processTableConstraints.gridy = 3;
+		processTableConstraints.gridwidth = 3;
+		processTableConstraints.gridheight = 1;
+		processTableConstraints.fill = GridBagConstraints.BOTH;
+		processTableConstraints.weightx = 1.0;
+		processTableConstraints.weighty = 0.7;
+		add(new JScrollPane(processTable), processTableConstraints);
 	}
 
 	protected void setSchedulerAlgorithm(JRadioButtonMenuItem source) {

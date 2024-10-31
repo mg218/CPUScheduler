@@ -46,28 +46,5 @@ public class ProcessView extends JPanel {
     g.setColor(Color.BLACK);
     g.drawString(process.getName(), 10, height/4);
 
-    g.drawString("CPU: " + createCPUBurstString(), 10, height/2);
-    g.drawString("IO: " + createIOBurstString(), 10, 3*height/4);
-
-  }
-
-  private String createCPUBurstString() {
-    return arr2String(process.getCpuBurst());
-  }
-
-  private String createIOBurstString() {
-    return arr2String(process.getIoBurst());
-  }
-
-  private String arr2String(int[] arr) {
-    var temp = new StringBuilder();
-
-    for (var value : arr) {
-      if(value != 0) {
-        temp.append(value + " ");
-      }
-    }
-
-    return temp.toString();
   }
 }
