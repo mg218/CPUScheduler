@@ -58,23 +58,22 @@ public abstract class SchedulingAlgorithm {
 			}
 		}
 		// remove the running processes from the all queue
-		if (!readyQueue.isEmpty()) {
+		if (!readyQueue.isEmpty()&&systemTime==0) {
 			allProcs.removeAll(readyQueue);
 			curProcess = pickNextProcess();
 		}
-		if (!ioQueue.isEmpty())
+		if (!ioQueue.isEmpty()&&systemTime==0)
 			curIO = ioQueue.get(0);
 		// checks to see if the queue and process changed and create a log if they do
 
 		print();
-		if (curProcess.getStartTime() < 0)
-			curProcess.setStartTime(systemTime);
+		if (curProcess!=null)
+			if(curProcess.getStartTime() < 0)
+				curProcess.setStartTime(systemTime);
 		//if the CPU starts executing a new process create an event
-		if(!readyQueue.isEmpty()&&curProcess!=lastCPU)
+		if(!readyQueue.isEmpty()&&curProcess!=lastCPU&&systemTime==1)
 			events.add(new ProcessEvent(curProcess,type.CPU));
-		//if the IO starts executing a new process create an event
-		if(!ioQueue.isEmpty()&&curIO!=lastIO)
-			events.add(new ProcessEvent(curIO,type.IO));	
+		
 
 		if (!readyQueue.isEmpty()) {
 			CPU.execute(curProcess, curProcess.getCpuBurst(), curProcess.getBurstIndex(), 1);
@@ -92,6 +91,11 @@ public abstract class SchedulingAlgorithm {
 		}
 
 		systemTime++;
+		if(curIO!=null)
+			lastIO=curIO;
+		if(curProcess!=null)
+			lastCPU=curProcess;
+		
 		if (ioQueue.isEmpty() == false) {
 			if (curIO.getIoBurst()[curIO.getIoBurst().length - 1] == 0) {
 				curIO.setIoFinishTime(systemTime);
@@ -106,34 +110,50 @@ public abstract class SchedulingAlgorithm {
 				events.add(new ProcessEvent(curIO, type.CPUQUEUE));
 			}
 		}
+		
 
 		// finish up process
-		if (!readyQueue.isEmpty()) {
-			if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
-				curProcess.setFinishTime(systemTime);
-				events.add(new ProcessEvent(curProcess, type.TERMINATED));
-				if (readyQueue.size() == 1&&ioQueue.isEmpty())
-					events.add(new ProcessEvent(curProcess, type.DONE));
-				readyQueue.remove(curProcess);
-				finishedProcs.add(curProcess);
-				System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d", curProcess.getName(),
-						systemTime, curProcess.getStartTime(), curProcess.getTurnaroundTime(),
-						curProcess.getWaitingTime());
-			} else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
-				curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
-				readyQueue.remove(curProcess);
-				curProcess.resetExCount();
-				ioQueue.add(curProcess);
-				events.add(new ProcessEvent(curProcess, type.IOQUEUE));
+		if(curProcess!=null)
+			if (!readyQueue.isEmpty()) {
+				if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
+					curProcess.setFinishTime(systemTime);
+					events.add(new ProcessEvent(curProcess, type.TERMINATED));
+					if (readyQueue.size() == 1&&ioQueue.isEmpty())
+						events.add(new ProcessEvent(curProcess, type.DONE));
+					readyQueue.remove(curProcess);
+					finishedProcs.add(curProcess);
+					System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d", curProcess.getName(),
+							systemTime, curProcess.getStartTime(), curProcess.getTurnaroundTime(),
+							curProcess.getWaitingTime());
+				} else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
+					curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
+					readyQueue.remove(curProcess);
+					curProcess.resetExCount();
+					ioQueue.add(curProcess);
+					events.add(new ProcessEvent(curProcess, type.IOQUEUE));
+				}
+	
 			}
-
+		if (!readyQueue.isEmpty()) {
+			allProcs.removeAll(readyQueue);
+			curProcess = pickNextProcess();
+		}else {
+			curProcess=null;
 		}
+		if (!ioQueue.isEmpty())
+			curIO = ioQueue.get(0);
+		else
+			curIO=null;
+		if(!readyQueue.isEmpty()&&curProcess!=lastCPU) {
+			events.add(new ProcessEvent(curProcess,type.CPU));
+			
+		}
+		//if the IO starts executing a new process create an event
+		if(!ioQueue.isEmpty()&&curIO!=lastIO)
+			events.add(new ProcessEvent(curIO,type.IO));	
 		
 //		procCountLast = procCount;// Update the most recently executed process
-		if(curIO!=null)
-			lastIO=curIO;
-		if(curProcess!=null)
-			lastCPU=curProcess;
+		
 
 		System.out.println();
 		
