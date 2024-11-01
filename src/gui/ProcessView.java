@@ -14,7 +14,7 @@ public class ProcessView extends JPanel {
   public ProcessView() {
     super();
     setPreferredSize(new Dimension(100, 64));
-    setMinimumSize(new Dimension(100, 64));
+    setMinimumSize(new Dimension(87, 56));
   }
 
   public ProcessView(PCB p) {
@@ -38,13 +38,13 @@ public class ProcessView extends JPanel {
     
     var font = new Font(fontName, Font.PLAIN, height/4);
     g.setFont(font);
-    g.setColor(Color.GRAY);
-    g.fillRoundRect(0, 0, width, height, 10, 10);
     g.setColor(new Color(process.getName().hashCode()));
-    g.drawRoundRect(1, 1, width-1, height-1, 10, 10);
+    g.fillRoundRect(0, 0, width, height, 18, 18);
+    g.setColor(Color.GRAY);
+    g.fillRoundRect(5, 5, width-10, height-10, 8, 8);
 
     g.setColor(Color.BLACK);
-    g.drawString(process.getName(), 10, height/4);
+    g.drawString(process.getName(), 10, height/2+getFont().getSize()/2);
 
   }
 }

@@ -1,12 +1,16 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 
 import javax.swing.*;
 
 public class StatusBar extends JPanel {
 	private static final long serialVersionUID = 4092409503485793479L;
 
+  private String fontName = "Comic Sans MS";
+  
   JLabel lblTime;
   JLabel lblAlgo;
   JLabel lblCpuUtil;
@@ -20,18 +24,29 @@ public class StatusBar extends JPanel {
   public StatusBar() {
     super();
 
+    setLayout(new GridLayout());
+
     setBackground(new Color(0xbbbbbb));
+    var font = new Font(fontName, Font.PLAIN, 13);
 
     lblTime = new JLabel(TIME_STRING + "N/A");
+    lblTime.setHorizontalAlignment(JLabel.CENTER);
+    lblTime.setFont(font);
     add(lblTime);
 
     lblAlgo = new JLabel(ALGO_STRING + "FCFS");
+    lblAlgo.setHorizontalAlignment(JLabel.CENTER);
+    lblAlgo.setFont(font);
     add(lblAlgo);
 
     lblCpuUtil = new JLabel(CPU_UTILIZATION_STRING + "N/A");
+    lblCpuUtil.setHorizontalAlignment(JLabel.CENTER);
+    lblCpuUtil.setFont(font);
     add(lblCpuUtil);
 
     lblIoUtil = new JLabel(IO_UTILIZATION_STRING + "N/A");
+    lblIoUtil.setHorizontalAlignment(JLabel.CENTER);
+    lblIoUtil.setFont(font);
     add(lblIoUtil);
   }
 

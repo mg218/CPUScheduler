@@ -53,7 +53,7 @@ public class CPUPlayer extends JFrame {
 
 		initQueues();
 
-		setMinimumSize(new DimensionUIResource(500, 300));
+		setMinimumSize(new DimensionUIResource(500, 400));
 	}
 
 	private void initMenuBar() {
@@ -214,7 +214,7 @@ public class CPUPlayer extends JFrame {
 		CpuConstraints.gridwidth = 2;
 		CpuConstraints.gridheight = 2;
 		CpuConstraints.fill = GridBagConstraints.BOTH;
-		CpuConstraints.weightx = 0.3;
+		CpuConstraints.weightx = 0.6;
 		CpuConstraints.weighty = 1.0;
 		add(CpuQueue, CpuConstraints);
 	}
