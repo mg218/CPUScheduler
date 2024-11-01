@@ -3,6 +3,7 @@ package cpuscheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpuscheduler.PCB.stateEnum;
 import cpuscheduler.ProcessEvent.type;
 
 public abstract class SchedulingAlgorithm {
@@ -87,8 +88,12 @@ public abstract class SchedulingAlgorithm {
 		for (PCB proc : readyQueue) {
 			if (proc != curProcess)
 				proc.increaseWaitingTime(1);
-
 		}
+		for (PCB proc : ioQueue) {
+			if (proc != curIO)
+				proc.increaseIoWaitingTime(1);
+		}
+		
 
 		systemTime++;
 		if(curIO!=null)
@@ -118,6 +123,7 @@ public abstract class SchedulingAlgorithm {
 				if (curProcess.getCpuBurst()[curProcess.getCpuBurst().length - 1] == 0) {
 					curProcess.setFinishTime(systemTime);
 					events.add(new ProcessEvent(curProcess, type.TERMINATED));
+					curProcess.setState(stateEnum.TERMINATED);
 					if (readyQueue.size() == 1&&ioQueue.isEmpty())
 						events.add(new ProcessEvent(curProcess, type.DONE));
 					readyQueue.remove(curProcess);
@@ -137,6 +143,10 @@ public abstract class SchedulingAlgorithm {
 		if (!readyQueue.isEmpty()) {
 			allProcs.removeAll(readyQueue);
 			curProcess = pickNextProcess();
+			if(name.equals("Round Robin")) {
+				if(lastCPU!=curProcess&&readyQueue.contains(lastCPU))
+					events.add(new ProcessEvent(lastCPU, type.INTERRUPTED));
+			}
 		}else {
 			curProcess=null;
 		}
@@ -146,7 +156,7 @@ public abstract class SchedulingAlgorithm {
 			curIO=null;
 		if(!readyQueue.isEmpty()&&curProcess!=lastCPU) {
 			events.add(new ProcessEvent(curProcess,type.CPU));
-			
+			curProcess.setState(stateEnum.RUNNING);
 		}
 		//if the IO starts executing a new process create an event
 		if(!ioQueue.isEmpty()&&curIO!=lastIO)
@@ -154,6 +164,14 @@ public abstract class SchedulingAlgorithm {
 		
 //		procCountLast = procCount;// Update the most recently executed process
 		
+		for(PCB p :readyQueue) {
+			if(p!=curProcess)
+				p.setState(stateEnum.READY);
+		}
+		for(PCB p : ioQueue) {
+			if(p!=curIO)
+				p.setState(stateEnum.WAITING);
+		}
 
 		System.out.println();
 		

@@ -10,9 +10,11 @@ public class PCB {
 	private int[] ioBurst;
 	private int priority; // priority level of the process
 	// the stats of the process execution
-	private int startTime, finishTime, turnaroundTime, waitingTime,ioFinishTime;
-	private int burstIndex,ioBurstIndex;
-	private int exCount;
+	private int startTime, finishTime, turnaroundTime, waitingTime,ioWaitTime,ioFinishTime;
+	private int burstIndex,ioBurstIndex;//points to which group of bursts is being executed
+	private int exCount;//counts how many times a process has been executed. Used to compare to the quantum time in round robin
+	private PCB.stateEnum state;//current state of a process
+	
 
 	// constructor
 	public PCB(String name, int id, int arrivalTime, int[] cpuBurst, int[] ioBurst, int priority) {
@@ -29,6 +31,8 @@ public class PCB {
 		this.setIoBurstIndex(0);
 		this.setIoFinishTime(-1);
 		this.exCount = 0;
+		this.setState(PCB.stateEnum.NEW);
+		
 	}
 
 	// create copy constructor
@@ -39,6 +43,14 @@ public class PCB {
 		System.arraycopy(otherPcb.cpuBurst, 0, this.cpuBurst, 0, otherPcb.cpuBurst.length);
 		System.arraycopy(otherPcb.ioBurst, 0, this.ioBurst, 0, otherPcb.ioBurst.length);
 
+	}
+	
+	public static enum stateEnum {
+		NEW,
+		READY,
+		WAITING,
+		RUNNING,
+		TERMINATED
 	}
 
 	public String getName() {
@@ -114,6 +126,14 @@ public class PCB {
 		this.waitingTime = waitingTime;
 	}
 
+	public int getIoWaitTime() {
+		return ioWaitTime;
+	}
+
+	public void setIoWaitTime(int ioWaitTime) {
+		this.ioWaitTime = ioWaitTime;
+	}
+
 	public int getBurstIndex() {
 		return burstIndex;
 	}
@@ -126,6 +146,9 @@ public class PCB {
 		// Increase the waitingTime variable with burst.
 		this.waitingTime += burst;
 
+	}
+	public void increaseIoWaitingTime(int a) {
+		this.waitingTime += a;
 	}
 
 	public int getIoBurstIndex() {
@@ -160,6 +183,14 @@ public class PCB {
 	}
 	public void resetExCount() {
 		exCount=0;
+	}
+
+	public PCB.stateEnum getState() {
+		return state;
+	}
+
+	public void setState(PCB.stateEnum state) {
+		this.state = state;
 	}
 
 	@Override
