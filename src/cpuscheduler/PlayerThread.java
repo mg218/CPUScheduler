@@ -20,11 +20,13 @@ public class PlayerThread extends Thread {
 	private final ProcessTableModel tableModel;
 
 	public List<PCB> allProcesses;
+	public List<PCB> allProcesses_copy;
 
 	public PlayerThread(PlayerEventLog eventLog, StatusBar statusbar, ProcessTableModel processTableModel) {
 		super();
 
 		allProcesses = new ArrayList<>();
+		allProcesses_copy = new ArrayList<>();
 
 		log = eventLog;
 		status = statusbar;
@@ -33,6 +35,8 @@ public class PlayerThread extends Thread {
 
 	public void setScheduler(String sa) {
 		pause();
+		//refresh AllProcesses with the copy
+		copyProcessList();
 		// create copy of processes list to prevent scheduler getting reference to ours
 		var allProcs = new ArrayList<PCB>(allProcesses);
 		// turn the string sa into a constructor of the respective scheduler
@@ -149,9 +153,8 @@ public class PlayerThread extends Thread {
 	}
 
 	public void loadProcessesFile(String filePath) throws FileNotFoundException {
-		allProcesses = new ArrayList<>();
-
 		try (var sc = new Scanner(new File(filePath))) {
+			allProcesses_copy = new ArrayList<>();
 			int id = 0;
 			String line;
 			while (sc.hasNextLine()) {
@@ -180,11 +183,10 @@ public class PlayerThread extends Thread {
 				}
 						
 				PCB proc = new PCB(name, id++, arrtime, cpuBurst,ioBurst, priority);
-				allProcesses.add(proc);
+				allProcesses_copy.add(proc);
+				copyProcessList();
 			}
 		}
-
-		tableModel.setProcesses(allProcesses);
 	}
 
 	private void stepScheduler() {
@@ -210,4 +212,13 @@ public class PlayerThread extends Thread {
 		}
 	}
 
+	// deep copy of allProcesses
+	private void copyProcessList() {
+		allProcesses.clear();
+		for (var p : allProcesses_copy) {
+			allProcesses.add(new PCB(p));
+		}
+
+		tableModel.setProcesses(allProcesses);
+	}
 }

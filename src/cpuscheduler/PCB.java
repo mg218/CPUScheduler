@@ -28,7 +28,17 @@ public class PCB {
 		this.setIoBurst(ioBurst);
 		this.setIoBurstIndex(0);
 		this.setIoFinishTime(-1);
-		this.exCount=0;
+		this.exCount = 0;
+	}
+
+	// create copy constructor
+	public PCB(PCB otherPcb) {
+		this(otherPcb.name, otherPcb.id, otherPcb.arrivalTime, new int[otherPcb.cpuBurst.length],
+				new int[otherPcb.ioBurst.length], otherPcb.priority);
+
+		System.arraycopy(otherPcb.cpuBurst, 0, this.cpuBurst, 0, otherPcb.cpuBurst.length);
+		System.arraycopy(otherPcb.ioBurst, 0, this.ioBurst, 0, otherPcb.ioBurst.length);
+
 	}
 
 	public String getName() {
