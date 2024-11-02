@@ -17,9 +17,8 @@ public class ProcessTableModel implements TableModel, Serializable {
   protected EventListenerList listenerList = new EventListenerList();
 
   // Columns
-  private static final String[] columnNames = { "Name", "State", "Priority", "wait", "IOwait", "CPU Bursts", "IO Bursts", "turnaround", "Arrival", "Finish"};
+  private static final String[] columnNames = { "Name", "State", "Priority", "wait", "IOwait", "CPU Bursts", "IO Bursts", "Arrival", "Response", "turnaround", "Finish"};
 
-  
   public ProcessTableModel() {
   }
 
@@ -57,9 +56,17 @@ public class ProcessTableModel implements TableModel, Serializable {
       case 4 -> {return process.getIoWaitTime();}
       case 5 -> {return arr2String(process.getCpuBurst());}
       case 6 -> {return arr2String(process.getIoBurst());}
-      case 7 -> {return process.getTurnaroundTime();}
-      case 8 -> {return process.getArrivalTime();}
-      case 9 -> {
+      case 7 -> {return process.getArrivalTime();}
+      case 8 -> {
+        var responseTime = process.getResponseTime();
+        
+        if(responseTime == -1) {
+          return "N/A";
+        }
+        return responseTime;
+      }
+      case 9 -> {return process.getTurnaroundTime();}
+      case 10 -> {
         var finishTime = process.getFinishTime();
         
         if(finishTime == -1) {
@@ -75,8 +82,8 @@ public class ProcessTableModel implements TableModel, Serializable {
   public Class<?> getColumnClass(int columnIndex) {
     switch(columnIndex) {
       case 0,1 -> {return String.class;}
-      case 2,3,4,5,6,7,8,9 -> {return Integer.class;}
-      // 9 can be String or Integer
+      case 2,3,4,5,6,7,8,9,10 -> {return Integer.class;}
+      // 8,10 can be String or Integer
       default -> {return Object.class;}
     }
   }
