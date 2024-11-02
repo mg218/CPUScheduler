@@ -14,20 +14,22 @@ public class ProcessTableModel implements TableModel, Serializable {
   private static final long serialVersionUID = 999999999L;
 
   private List<PCB> processes;
+  protected EventListenerList listenerList = new EventListenerList();
 
   // Columns
-  private String[] columnNames = { "Name", "Arrival", "Priority", "CPU Bursts", "IO Bursts"};
+  private static final String[] columnNames = { "Name", "State", "Priority", "wait", "IOwait", "CPU Bursts", "IO Bursts", "turnaround", "Arrival", "Finish"};
 
-  protected EventListenerList listenerList = new EventListenerList();
   
   public ProcessTableModel() {
   }
 
+  // sets the current process Objects to be viewed in the table
   public void setProcesses(List<PCB> processes) {
     this.processes = processes;
     fireTableChanged(new TableModelEvent(this));
   }
 
+  // force a refresh of the table
   public void refresh() {
     fireTableChanged(new TableModelEvent(this));
   }
@@ -49,17 +51,34 @@ public class ProcessTableModel implements TableModel, Serializable {
 
     switch(columnIndex) {
       case 0 -> {return process.getName();}
-      case 1 -> {return process.getArrivalTime();}
+      case 1 -> {return process.getState();}
       case 2 -> {return process.getPriority();}
-      case 3 -> {return arr2String(process.getCpuBurst());}
-      case 4 -> {return arr2String(process.getIoBurst());}
-      default -> {return -1;}
+      case 3 -> {return process.getWaitingTime();}
+      case 4 -> {return process.getIoWaitTime();}
+      case 5 -> {return arr2String(process.getCpuBurst());}
+      case 6 -> {return arr2String(process.getIoBurst());}
+      case 7 -> {return process.getTurnaroundTime();}
+      case 8 -> {return process.getArrivalTime();}
+      case 9 -> {
+        var finishTime = process.getFinishTime();
+        
+        if(finishTime == -1) {
+          return "N/A";
+        }
+        return finishTime;
+      }
+      default -> {return -999;}
     }
   }
 
   @Override
   public Class<?> getColumnClass(int columnIndex) {
-    return Object.class;
+    switch(columnIndex) {
+      case 0,1 -> {return String.class;}
+      case 2,3,4,5,6,7,8,9 -> {return Integer.class;}
+      // 9 can be String or Integer
+      default -> {return Object.class;}
+    }
   }
 
   @Override
@@ -105,6 +124,6 @@ public class ProcessTableModel implements TableModel, Serializable {
       }
     }
 
-    return temp.toString();
+    return temp.toString().trim();
   }
 }
