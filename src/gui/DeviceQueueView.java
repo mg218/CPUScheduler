@@ -19,8 +19,8 @@ public class DeviceQueueView extends JPanel implements ActionListener {
 	public DeviceQueueView(PlayerThread p, int CPUs, int IOs) {
 		super();
 		player = p;
-		
-    setLayout(new GridBagLayout());
+
+		setLayout(new GridBagLayout());
 
 		setFont(new Font("Comic Sans MS", Font.PLAIN, 16));
 		devices = new ProcessView[CPUs + IOs];
@@ -29,7 +29,7 @@ public class DeviceQueueView extends JPanel implements ActionListener {
 		setupDeviceQueue("CPU", 0, 0);
 		setupDeviceQueue("IO", 0, 1);
 
-		setPreferredSize(new Dimension((CPUs + IOs)*150, 400));
+		setPreferredSize(new Dimension((CPUs + IOs) * 150, 400));
 
 		var timer = new Timer(REFRESH_MS, this);
 		timer.start();
@@ -79,11 +79,10 @@ public class DeviceQueueView extends JPanel implements ActionListener {
 		queueConstraints.weightx = 1.0;
 		queueConstraints.weighty = 1.0;
 
-    var scrollPane = new JScrollPane(queues[number + xOffset],
-            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setPreferredSize(new Dimension(200, 192));
+		var scrollPane = new JScrollPane(queues[number + xOffset], JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setPreferredSize(new Dimension(200, 192));
 
-    add(scrollPane, queueConstraints);
+		add(scrollPane, queueConstraints);
 	}
 }

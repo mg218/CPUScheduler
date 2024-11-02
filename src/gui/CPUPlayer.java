@@ -194,7 +194,8 @@ public class CPUPlayer extends JFrame {
 
 		var mntmAbout = new JMenuItem("About");
 		var aboutListener = (ActionListener) (ActionEvent e) -> {
-			JOptionPane.showMessageDialog(this, "Made By:\nJoshua Miertschin\nMason Goss", "About" , JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Made By:\nJoshua Miertschin\nMason Goss", "About",
+					JOptionPane.INFORMATION_MESSAGE);
 		};
 		mntmAbout.addActionListener(aboutListener);
 		mnHelp.add(mntmAbout);
@@ -275,8 +276,8 @@ public class CPUPlayer extends JFrame {
 		scheduler = source.getName();
 
 		switch (scheduler) {
-			case "RR" -> mnQuantum.setVisible(true);
-			default -> mnQuantum.setVisible(false);
+		case "RR" -> mnQuantum.setVisible(true);
+		default -> mnQuantum.setVisible(false);
 		}
 
 		player.setScheduler(scheduler);
@@ -301,10 +302,12 @@ public class CPUPlayer extends JFrame {
 		}
 	}
 
+	//gets user input and returns it
 	private String doInputDialog(String message) {
 		return (String) JOptionPane.showInputDialog(this, message, "");
 	}
 
+	//creates a file diaglog and returns a String of what the uer selected or it's empty
 	private String doFileDialog(String dir, int mode) {
 		var fd = new FileDialog(this, "Choose a file", mode);
 		fd.setDirectory(dir);

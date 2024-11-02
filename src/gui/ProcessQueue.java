@@ -11,10 +11,11 @@ public class ProcessQueue extends JPanel {
 
 	private int processCount = 0;
 
+	//displays a List of PCB objects using ProcessViews, designed to be placed inside a JSCrollPane
 	public ProcessQueue() {
 		super();
-    setPreferredSize(new Dimension(100, 64));
-    setLayout(new GridBagLayout());
+		setPreferredSize(new Dimension(100, 64));
+		setLayout(new GridBagLayout());
 	}
 
 	public ProcessQueue(List<PCB> processes) {
@@ -22,13 +23,15 @@ public class ProcessQueue extends JPanel {
 		displayList(processes);
 	}
 
+	//display a new PPCB list
 	public void displayList(List<PCB> processes) {
-		if(processes == null) return;
-		
-		//get rid of all added components
+		if (processes == null)
+			return;
+
+		// get rid of all added components
 		removeAll();
-		
-		//add new components
+
+		// add new components
 		int i = 0;
 		for (PCB p : processes) {
 			var constraints = new GridBagConstraints();
@@ -43,15 +46,15 @@ public class ProcessQueue extends JPanel {
 		}
 		processCount = processes.size();
 
-		//revalidate and repaint so the gui is redrawn
+		// revalidate and repaint so the gui is redrawn
 		revalidate();
 		repaint();
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
-			// Calculate based on the actual content
-			int height = processCount * 64;
-			return new Dimension(100, height); // Set width and calculated height
+		// Calculate based on the actual content
+		int height = processCount * 64;
+		return new Dimension(100, height); // Set width and calculated height
 	}
 }
