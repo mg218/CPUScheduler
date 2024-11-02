@@ -27,9 +27,9 @@ public class PCB {
 		this.startTime = -1;
 		this.finishTime = -1;
 		this.burstIndex = 0;
-		this.setIoBurst(ioBurst);
-		this.setIoBurstIndex(0);
-		this.setIoFinishTime(-1);
+		this.ioBurst=ioBurst;
+		this.ioBurstIndex=0;
+		this.ioFinishTime=-1;
 		this.exCount = 0;
 		this.setState(PCB.stateEnum.NEW);
 		
@@ -107,7 +107,7 @@ public class PCB {
 
 	public void setFinishTime(int finishTime) {
 		this.finishTime = finishTime;
-		this.turnaroundTime = finishTime - this.arrivalTime;
+		this.turnaroundTime = finishTime - this.startTime;
 	}
 
 	public int getTurnaroundTime() {
