@@ -12,7 +12,7 @@ public abstract class SchedulingAlgorithm {
 	protected List<PCB> readyQueue; // ready queue of ready processes
 	protected List<PCB> finishedProcs; // list of terminated processes
 	protected List<PCB> ioQueue;
-	protected List<PCB> allProcFinal;
+	protected List<PCB> allProcStatic;
 	protected PCB curProcess; // current selected process by the scheduler
 	protected PCB curIO;
 	protected int systemTime; // system time or simulation time steps
@@ -25,12 +25,12 @@ public abstract class SchedulingAlgorithm {
 
 	public SchedulingAlgorithm(String name, List<PCB> queue, int quantum) {
 		this.name = name;
-		this.allProcs = queue;
+		this.allProcs = new ArrayList<>(queue);
 		this.quantum = quantum;
 		this.readyQueue = new ArrayList<>();
 		this.finishedProcs = new ArrayList<>();
 		this.ioQueue = new ArrayList<>();
-		this.allProcFinal= new ArrayList<>(queue);
+		this.allProcStatic= queue;
 	}
 
 	public void schedule() {
@@ -228,17 +228,17 @@ public abstract class SchedulingAlgorithm {
 	//average wait time for a list of processes
 	public double getAvgWt() {
 		double total=0;
-		for(PCB p : allProcFinal) {
+		for(PCB p : allProcStatic) {
 			total+= p.getWaitingTime();
 		}
-		return total/allProcFinal.size();
+		return total/allProcStatic.size();
 	}
 	public double getAvgIoWt() {
 		double total=0;
-		for(PCB p : allProcFinal) {
+		for(PCB p : allProcStatic) {
 			total+= p.getIoWaitTime();
 		}
-		return total/allProcFinal.size();
+		return total/allProcStatic.size();
 	}
 	//returns throughput based on finished processes over the current time
 	public double getThroughput() {
