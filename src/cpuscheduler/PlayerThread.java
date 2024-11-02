@@ -44,6 +44,7 @@ public class PlayerThread extends Thread {
 		case "FCFS" -> sched = new FCFS(allProcs);
 		case "PS" -> sched = new PSS(allProcs);
 		case "RR" -> sched = new RR(allProcs, RRQuantum);
+		case "SJF" -> sched = new SJF(allProcs);
 		default -> throw new IllegalArgumentException("Invalid scheduler");
 		}
 

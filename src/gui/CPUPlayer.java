@@ -123,10 +123,16 @@ public class CPUPlayer extends JFrame {
 		rdbtnPS.setName("PS");
 		mnSchedule.add(rdbtnPS);
 
+		var rdbtnSJF = new JRadioButtonMenuItem("Shortest Job First");
+		rdbtnSJF.addActionListener(scheduleListener);
+		rdbtnSJF.setName("SJF");
+		mnSchedule.add(rdbtnSJF);
+
 		var scheduleGroup = new ButtonGroup();
 		scheduleGroup.add(rdbtnFCFS);
 		scheduleGroup.add(rdbtnRR);
 		scheduleGroup.add(rdbtnPS);
+		scheduleGroup.add(rdbtnSJF);
 
 		// Simulation Time subMenu
 		var mnStepTime = new JMenu("Simulation Time(ms)");
@@ -269,8 +275,8 @@ public class CPUPlayer extends JFrame {
 		scheduler = source.getName();
 
 		switch (scheduler) {
-		case "FCFS", "PS" -> mnQuantum.setVisible(false);
-		case "RR" -> mnQuantum.setVisible(true);
+			case "RR" -> mnQuantum.setVisible(true);
+			default -> mnQuantum.setVisible(false);
 		}
 
 		player.setScheduler(scheduler);
