@@ -231,6 +231,13 @@ public abstract class SchedulingAlgorithm {
 		}
 		return total/procs.size();
 	}
+	public double getAvgIoWt(List<PCB> procs) {
+		double total=0;
+		for(PCB p : procs) {
+			total+= p.getIoWaitTime();
+		}
+		return total/procs.size();
+	}
 	//returns throughput based on finished processes over the current time
 	public double getThroughput() {
 		double fin=finishedProcs.size(), st=systemTime;

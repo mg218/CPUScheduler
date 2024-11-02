@@ -148,7 +148,7 @@ public class PCB {
 
 	}
 	public void increaseIoWaitingTime(int a) {
-		this.waitingTime += a;
+		this.ioWaitTime += a;
 	}
 
 	public int getIoBurstIndex() {
