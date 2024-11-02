@@ -61,7 +61,7 @@ public abstract class SchedulingAlgorithm {
 			}
 		}
 		// remove the running processes from the all queue
-		if (!readyQueue.isEmpty()&&systemTime==0) {
+		if (!readyQueue.isEmpty()&&(systemTime==0||curProcess==null)) {
 			allProcs.removeAll(readyQueue);
 			curProcess = pickNextProcess();
 		}
