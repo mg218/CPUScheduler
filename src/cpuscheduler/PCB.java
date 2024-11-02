@@ -193,7 +193,11 @@ public class PCB {
 		this.state = state;
 	}
 	public int getResponseTime() {
-		return startTime-arrivalTime;
+		if(startTime==-1) {
+			return -1;
+		}else {
+			return startTime-arrivalTime;
+		}
 	}
 	public int getBurstVal() {
 		return getCpuBurst()[getBurstIndex()];
