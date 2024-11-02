@@ -35,7 +35,7 @@ public class PlayerThread extends Thread {
 
 	public void setScheduler(String sa) {
 		pause();
-		//refresh AllProcesses with the copy
+		// refresh AllProcesses with the copy
 		copyProcessList();
 		// turn the string sa into a constructor of the respective scheduler
 		switch (sa) {
@@ -78,8 +78,9 @@ public class PlayerThread extends Thread {
 	}
 
 	public PCB getCurProcess(String type) {
-		if(sched == null) return null;
-		if(type.equals("CPU")) {
+		if (sched == null)
+			return null;
+		if (type.equals("CPU")) {
 			return sched.getCurProcess();
 		} else {
 			return sched.getCurIO();
@@ -88,12 +89,14 @@ public class PlayerThread extends Thread {
 	}
 
 	public List<PCB> getCurQueue(String type) {
-		if(sched == null) return null;
-		//make new array lists so removing the current process doesn't modify the original
-		if(type.equals("CPU")) {
+		if (sched == null)
+			return null;
+		// make new array lists so removing the current process doesn't modify the
+		// original
+		if (type.equals("CPU")) {
 			var temp = new ArrayList<PCB>(sched.getReadyQueue());
 			temp.remove(sched.getCurProcess());
-			return temp; 
+			return temp;
 		} else {
 			var temp = new ArrayList<PCB>(sched.getCurIoQueue());
 			temp.remove(sched.getCurIO());
@@ -163,25 +166,25 @@ public class PlayerThread extends Thread {
 				int arrtime = Integer.parseInt(arr[1]);
 				int priority = Integer.parseInt(arr[2]);
 				int[] burst = new int[arr.length - 3];// create an array for CPU/IO Bursts which can differ based on
-															// length of CPU bursts/IO bursts
-				int[] cpuBurst= new int[(burst.length/2)+1];
-				int[] ioBurst = new int[burst.length/2];
+														// length of CPU bursts/IO bursts
+				int[] cpuBurst = new int[(burst.length / 2) + 1];
+				int[] ioBurst = new int[burst.length / 2];
 				for (int i = 3; i < arr.length; i++) {
 					burst[i - 3] = Integer.parseInt(arr[i]);
 				}
-				int cpuc=0,ioc=0;
-				for(int i=0;i<burst.length;i++) {
-					
-					if(i%2==0) {
-						cpuBurst[cpuc]=burst[i];
+				int cpuc = 0, ioc = 0;
+				for (int i = 0; i < burst.length; i++) {
+
+					if (i % 2 == 0) {
+						cpuBurst[cpuc] = burst[i];
 						cpuc++;
-					}else {
-						ioBurst[ioc]=burst[i];
+					} else {
+						ioBurst[ioc] = burst[i];
 						ioc++;
 					}
 				}
-						
-				PCB proc = new PCB(name, id++, arrtime, cpuBurst,ioBurst, priority);
+
+				PCB proc = new PCB(name, id++, arrtime, cpuBurst, ioBurst, priority);
 				allProcesses_copy.add(proc);
 				copyProcessList();
 			}

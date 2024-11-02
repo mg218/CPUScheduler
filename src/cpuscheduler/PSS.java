@@ -21,6 +21,5 @@ public class PSS extends SchedulingAlgorithm {
 		// return top procrss
 		return readyQueue.get(0);
 	}
-	
 
 }

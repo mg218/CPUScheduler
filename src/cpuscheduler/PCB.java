@@ -10,11 +10,11 @@ public class PCB {
 	private int[] ioBurst;
 	private int priority; // priority level of the process
 	// the stats of the process execution
-	private int startTime, finishTime, turnaroundTime, waitingTime,ioWaitTime,ioFinishTime;//Time metrics
-	private int burstIndex,ioBurstIndex;//points to which group of bursts is being executed
-	private int exCount;//counts how many times a process has been executed. Used to compare to the quantum time in round robin
-	private PCB.stateEnum state;//current state of a process
-	
+	private int startTime, finishTime, turnaroundTime, waitingTime, ioWaitTime, ioFinishTime;// Time metrics
+	private int burstIndex, ioBurstIndex;// points to which group of bursts is being executed
+	private int exCount;// counts how many times a process has been executed. Used to compare to the
+						// quantum time in round robin
+	private PCB.stateEnum state;// current state of a process
 
 	// constructor
 	public PCB(String name, int id, int arrivalTime, int[] cpuBurst, int[] ioBurst, int priority) {
@@ -27,12 +27,12 @@ public class PCB {
 		this.startTime = -1;
 		this.finishTime = -1;
 		this.burstIndex = 0;
-		this.ioBurst=ioBurst;
-		this.ioBurstIndex=0;
-		this.ioFinishTime=-1;
+		this.ioBurst = ioBurst;
+		this.ioBurstIndex = 0;
+		this.ioFinishTime = -1;
 		this.exCount = 0;
 		this.setState(PCB.stateEnum.NEW);
-		
+
 	}
 
 	// create copy constructor
@@ -44,13 +44,9 @@ public class PCB {
 		System.arraycopy(otherPcb.ioBurst, 0, this.ioBurst, 0, otherPcb.ioBurst.length);
 
 	}
-	
+
 	public static enum stateEnum {
-		NEW,
-		READY,
-		WAITING,
-		RUNNING,
-		TERMINATED
+		NEW, READY, WAITING, RUNNING, TERMINATED
 	}
 
 	public String getName() {
@@ -147,6 +143,7 @@ public class PCB {
 		this.waitingTime += burst;
 
 	}
+
 	public void increaseIoWaitingTime(int a) {
 		this.ioWaitTime += a;
 	}
@@ -178,11 +175,13 @@ public class PCB {
 	public void increaseExCount() {
 		this.exCount++;
 	}
+
 	public int getExCount() {
 		return exCount;
 	}
+
 	public void resetExCount() {
-		exCount=0;
+		exCount = 0;
 	}
 
 	public PCB.stateEnum getState() {
@@ -192,13 +191,15 @@ public class PCB {
 	public void setState(PCB.stateEnum state) {
 		this.state = state;
 	}
+
 	public int getResponseTime() {
-		if(startTime==-1) {
+		if (startTime == -1) {
 			return -1;
-		}else {
-			return startTime-arrivalTime;
+		} else {
+			return startTime - arrivalTime;
 		}
 	}
+
 	public int getBurstVal() {
 		return getCpuBurst()[getBurstIndex()];
 	}
@@ -208,8 +209,8 @@ public class PCB {
 		String outp = "PCB [name=" + name + ", id=" + id + ", arrivalTime= " + arrivalTime + ", Priority= " + priority
 				+ ", ";
 		// prints out all the bursts
-		int ioc=0,cpuc=0;
-		for (int i = 0; i < cpuBurst.length+ioBurst.length; i++) {
+		int ioc = 0, cpuc = 0;
+		for (int i = 0; i < cpuBurst.length + ioBurst.length; i++) {
 			if (i % 2 == 0) {
 				// if the process is an even index it is a cpu burst
 				outp += "CPUburst= " + cpuBurst[cpuc] + ", ";
