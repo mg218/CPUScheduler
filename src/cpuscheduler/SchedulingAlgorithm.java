@@ -216,4 +216,18 @@ public abstract class SchedulingAlgorithm {
 	public double cpuUtilization() {
 		return (cpuUse/systemTime)*100;
 	}
+	public double getAvgTat(List<PCB> procs) {
+		double total=0;
+		for(PCB p : procs) {
+			total+= p.getTurnaroundTime();
+		}
+		return total/procs.size();
+	}
+	public double getAvgWt(List<PCB> procs) {
+		double total=0;
+		for(PCB p : procs) {
+			total+= p.getWaitingTime();
+		}
+		return total/procs.size();
+	}
 }

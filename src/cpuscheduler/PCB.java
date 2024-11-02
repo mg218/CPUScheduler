@@ -10,7 +10,7 @@ public class PCB {
 	private int[] ioBurst;
 	private int priority; // priority level of the process
 	// the stats of the process execution
-	private int startTime, finishTime, turnaroundTime, waitingTime,ioWaitTime,ioFinishTime;
+	private int startTime, finishTime, turnaroundTime, waitingTime,ioWaitTime,ioFinishTime;//Time metrics
 	private int burstIndex,ioBurstIndex;//points to which group of bursts is being executed
 	private int exCount;//counts how many times a process has been executed. Used to compare to the quantum time in round robin
 	private PCB.stateEnum state;//current state of a process
@@ -191,6 +191,9 @@ public class PCB {
 
 	public void setState(PCB.stateEnum state) {
 		this.state = state;
+	}
+	public int getResponseTime() {
+		return startTime-arrivalTime;
 	}
 
 	@Override
