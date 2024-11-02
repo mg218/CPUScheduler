@@ -1,6 +1,8 @@
 package gui;
 
 import cpuscheduler.ProcessEvent;
+
+import java.io.*;
 import javax.swing.JTextArea;
 
 public class PlayerEventLog extends JTextArea {
@@ -25,4 +27,11 @@ public class PlayerEventLog extends JTextArea {
 	public void clear() {
 		super.setText("");
 	}
+
+  public void saveLog(String filePath) throws IOException {
+		//open the file and write this object's text to it
+		FileWriter writer = new FileWriter(filePath);
+		writer.write(this.getText());
+		writer.close();
+  }
 }

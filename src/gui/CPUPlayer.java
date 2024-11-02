@@ -66,7 +66,7 @@ public class CPUPlayer extends JFrame {
 
 		var mntmNewSecnarioFile = new JMenuItem("Open scenario file");
 		mntmNewSecnarioFile.addActionListener((ActionEvent e) -> {
-			var filePath = doFileDialog(System.getProperty("user.home"));
+			var filePath = doFileDialog(System.getProperty("user.home"), FileDialog.LOAD);
 			try {
 				player.loadProcessesFile(filePath);
 			} catch (FileNotFoundException ex) {
@@ -77,6 +77,23 @@ public class CPUPlayer extends JFrame {
 			eventLog.addEvent("Scenario file loaded: " + filePath);
 		});
 		mnFile.add(mntmNewSecnarioFile);
+
+		var mntmSaveLog = new JMenuItem("Save Scenario Log");
+		mntmSaveLog.addActionListener((ActionEvent saveAction) -> {
+			var filePath = doFileDialog(System.getProperty("user.home"), FileDialog.SAVE);
+			try {
+				eventLog.saveLog(filePath);
+			} catch (IOException ex) {
+				System.err.println(ex.getMessage());
+			}
+		});
+		mnFile.add(mntmSaveLog);
+
+		var mntmReset = new JMenuItem("Reset Scenario");
+		mntmReset.addActionListener((ActionEvent e) -> {
+			player.setScheduler(scheduler);
+		});
+		mnFile.add(mntmReset);
 
 		// settings menu
 		var mnSettings = new JMenu("Settings");
@@ -282,8 +299,8 @@ public class CPUPlayer extends JFrame {
 		return (String) JOptionPane.showInputDialog(this, message, "");
 	}
 
-	private String doFileDialog(String dir) {
-		var fd = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+	private String doFileDialog(String dir, int mode) {
+		var fd = new FileDialog(this, "Choose a file", mode);
 		fd.setDirectory(dir);
 		fd.setFile("*.txt");
 		fd.setVisible(true);
@@ -293,6 +310,7 @@ public class CPUPlayer extends JFrame {
 			return "";
 		}
 
+		fd.dispose();
 		return fd.getDirectory() + filename;
 	}
 }
