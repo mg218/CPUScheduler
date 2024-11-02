@@ -67,6 +67,9 @@ public class driver {
 		case "RR":
 			sched = new RR(allProcesses, quant);
 			break;
+		case "SJF":
+			sched= new SJF(allProcesses);
+			break;
 		default:
 			System.err.println("not supported");
 		}

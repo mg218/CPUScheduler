@@ -195,6 +195,9 @@ public class PCB {
 	public int getResponseTime() {
 		return startTime-arrivalTime;
 	}
+	public int getBurstVal() {
+		return getCpuBurst()[getBurstIndex()];
+	}
 
 	@Override
 	public String toString() {

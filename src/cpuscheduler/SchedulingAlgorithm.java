@@ -131,7 +131,7 @@ public abstract class SchedulingAlgorithm {
 					System.out.printf("Process %s terminated at %d start time = %d TAT =%d WT = %d", curProcess.getName(),
 							systemTime, curProcess.getStartTime(), curProcess.getTurnaroundTime(),
 							curProcess.getWaitingTime());
-				} else if (curProcess.getCpuBurst()[curProcess.getBurstIndex()] == 0) {
+				} else if (curProcess.getBurstVal() == 0) {
 					curProcess.setBurstIndex(curProcess.getBurstIndex() + 1);
 					readyQueue.remove(curProcess);
 					curProcess.resetExCount();
@@ -223,11 +223,17 @@ public abstract class SchedulingAlgorithm {
 		}
 		return total/procs.size();
 	}
+	//average wait time for a list of processes
 	public double getAvgWt(List<PCB> procs) {
 		double total=0;
 		for(PCB p : procs) {
 			total+= p.getWaitingTime();
 		}
 		return total/procs.size();
+	}
+	//returns throughput based on finished processes over the current time
+	public double getThroughput() {
+		double fin=finishedProcs.size(), st=systemTime;
+		return fin/st;
 	}
 }
