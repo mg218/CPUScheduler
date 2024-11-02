@@ -37,14 +37,12 @@ public class PlayerThread extends Thread {
 		pause();
 		//refresh AllProcesses with the copy
 		copyProcessList();
-		// create copy of processes list to prevent scheduler getting reference to ours
-		var allProcs = new ArrayList<PCB>(allProcesses);
 		// turn the string sa into a constructor of the respective scheduler
 		switch (sa) {
-		case "FCFS" -> sched = new FCFS(allProcs);
-		case "PS" -> sched = new PSS(allProcs);
-		case "RR" -> sched = new RR(allProcs, RRQuantum);
-		case "SJF" -> sched = new SJF(allProcs);
+		case "FCFS" -> sched = new FCFS(allProcesses);
+		case "PS" -> sched = new PSS(allProcesses);
+		case "RR" -> sched = new RR(allProcesses, RRQuantum);
+		case "SJF" -> sched = new SJF(allProcesses);
 		default -> throw new IllegalArgumentException("Invalid scheduler");
 		}
 
@@ -197,6 +195,10 @@ public class PlayerThread extends Thread {
 		status.setTime(sched.systemTime);
 		status.setCpuUtilization(sched.cpuUtilization());
 		status.setIoUtilization(sched.ioUtilization());
+		status.setAverageTurnaroundTime(sched.getAvgTat());
+		status.setAverageCpuWaitingTime(sched.getAvgWt());
+		status.setAverageIoWaitingTime(sched.getAvgIoWt());
+		status.setThroughput(sched.getThroughput());
 
 		tableModel.refresh();
 	}

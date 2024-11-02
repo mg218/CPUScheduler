@@ -220,6 +220,7 @@ public abstract class SchedulingAlgorithm {
 	}
 	public double getAvgTat() {
 		double total=0;
+		if(finishedProcs.size()==0) return -1.0;
 		for(PCB p : finishedProcs) {
 			total+= p.getTurnaroundTime();
 		}
